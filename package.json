@@ -52,6 +52,7 @@
     "test": "jest --passWithNoTests -c ./test/jest.config.js ./test",
     "e2e": "jest --collectCoverage=false --testRegex ./e2e",
     "onboard": "node --no-warnings -e 'require(\"./scripts/onboarding/index.js\").main()'",
+    "onboard-hubspot": "node --no-warnings -e 'require(\"./scripts/onboarding/hubspot/index.js\").main()'",
     "commerce-event-subscribe": "node --no-warnings -e 'require(\"./scripts/commerce-event-subscribe/index.js\").main()'",
     "code-check": "npx eslint 'actions/**/*.js' 'scripts/**/*.js' 'test/**/*.js' 'utils/**/*.js'"
   },

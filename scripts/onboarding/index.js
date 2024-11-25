@@ -108,11 +108,6 @@ async function main () {
   }
   console.log('Process of configuring Adobe I/O Events module in Commerce completed successfully')
 
-  
-  const configureHubspot = await require('../lib/hubspot/hubspot-create-workflows').main(process.env)
-  console.log('Process of creating Hubspot flows for Shipment integrations completed')
-
-
   return {
     code: 200,
     success: true,
