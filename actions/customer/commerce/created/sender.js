@@ -37,7 +37,7 @@ async function sendData(params, data, preProcessed) {
         logger.error('There was an error creating Contact in HubSpot')
         return {
             success: false,
-            statusCode: e.errors[0].code,
+            statusCode: 400,
             message: e.response
         }
     }
