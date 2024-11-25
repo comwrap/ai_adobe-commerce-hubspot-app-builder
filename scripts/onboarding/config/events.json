@@ -29,34 +29,11 @@
       }
     },
     "backoffice": {
-      "be-observer.sales_order_shipment_update": {
+      "be-observer.sales_order_shipment_create": {
         "sampleEventTemplate": {
-          "id": 33,
-          "orderId": 8,
-          "items": [
-            {
-              "entityId": 19,
-              "orderItemId": 8,
-              "qty": 1
-            }
-          ],
-          "tracks": [
-            {
-              "entityId": 19,
-              "trackNumber": "Custom Value Upd",
-              "title": "Custom Title Upd",
-              "carrierCode": "custom"
-            }
-          ],
-          "comments": [
-            {
-              "entityId": 19,
-              "notifyCustomer": false,
-              "comment": "Order Shipment Updated in Backoffice",
-              "visibleOnFront": true
-            }
-          ],
-          "stockSourceCode": "default"
+          "id": 1,
+          "trackingNumber": "111111",
+          "incrementId": "0000001"
         }
       }
     }
