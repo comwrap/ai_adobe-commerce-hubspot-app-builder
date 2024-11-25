@@ -12,15 +12,51 @@
             "updated_at": "2024-08-05 10:03:49"
           }
         }
-      },
-      "com.adobe.commerce.observer.customer_delete_commit_after": {
+      }
+    }
+  },
+  "order": {
+    "commerce": {
+      "com.adobe.commerce.observer.sales_order_save_commit_after": {
         "sampleEventTemplate": {
           "value": {
-            "id": 123,
-            "firstname": "John",
-            "lastname": "Doe",
-            "email": "john.doe@fakedomain.com"
+            "id": "12",
+            "increment_id": "000000012",
+            "created_at": "2024-08-05 14:34:19",
+            "updated_at": "2024-08-05 14:34:19"
           }
+        }
+      }
+    },
+    "backoffice": {
+      "be-observer.sales_order_shipment_update": {
+        "sampleEventTemplate": {
+          "id": 33,
+          "orderId": 8,
+          "items": [
+            {
+              "entityId": 19,
+              "orderItemId": 8,
+              "qty": 1
+            }
+          ],
+          "tracks": [
+            {
+              "entityId": 19,
+              "trackNumber": "Custom Value Upd",
+              "title": "Custom Title Upd",
+              "carrierCode": "custom"
+            }
+          ],
+          "comments": [
+            {
+              "entityId": 19,
+              "notifyCustomer": false,
+              "comment": "Order Shipment Updated in Backoffice",
+              "visibleOnFront": true
+            }
+          ],
+          "stockSourceCode": "default"
         }
       }
     }

@@ -26,19 +26,10 @@
   },
   {
     "event": {
-      "name": "observer.customer_delete_commit_after",
+      "name": "observer.sales_order_save_commit_after",
       "fields": [
         {
-          "name": "id"
-        },
-        {
-          "name": "email"
-        },
-        {
-          "name": "firstname"
-        },
-        {
-          "name": "lastname"
+          "name": "*"
         }
       ]
     }

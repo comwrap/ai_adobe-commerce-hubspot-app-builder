@@ -1,3 +1,4 @@
 {
-  "customer": ["commerce"]
+  "customer": ["commerce"],
+  "order": ["commerce", "backoffice"]
 }
