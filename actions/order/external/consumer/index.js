@@ -59,13 +59,6 @@ async function main (params) {
         statusCode = updateRes?.response?.result?.statusCode
         break
       }
-      case 'be-observer.sales_order_shipment_update': {
-        logger.info('Invoking shipment update')
-        const updateRes = await openwhiskClient.invokeAction('order-backoffice/shipment-updated', params.data)
-        response = updateRes?.response?.result?.body
-        statusCode = updateRes?.response?.result?.statusCode
-        break
-      }
       default: {
         logger.error(`Event type not found: ${params.type}`)
         return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)
