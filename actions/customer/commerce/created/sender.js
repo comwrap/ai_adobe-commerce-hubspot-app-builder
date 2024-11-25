@@ -26,10 +26,11 @@ async function sendData(params, data, preProcessed) {
     try {
         const response = await createContact(params.HUBSPOT_ACCESS_TOKEN, data)
         logger.debug('Hubspot response: ', response)
+        logger.debug('Contact id:', response.id)
 
         return {
             success: true,
-            result: response
+            contactId: response.id
         }
 
     } catch (e) {

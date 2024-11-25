@@ -46,7 +46,7 @@ async function main (params) {
     logger.debug(`Transformed data: ${JSON.stringify(transformedData)}`)
 
     logger.debug(`Preprocess data: ${stringParameters(params)}`)
-    const preProcessed = preProcess(params, transformedData)
+    const preProcessed = await preProcess(params, transformedData)
 
     logger.debug(`Start sending data: ${JSON.stringify(params)}`)
     const result = await sendData(params, transformedData, preProcessed)

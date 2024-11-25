@@ -32,27 +32,27 @@ function transformData (data) {
 
   const transformedData = {
     properties: {
+      hs_external_order_id: data.entity_id,
       hs_order_name: data.increment_id,
       hs_currency_code: data.order_currency_code,
       hs_source_store: data.store_name,
       hs_fulfillment_status: "New",
       hs_shipping_address_city: shippingAddress.city,
       hs_shipping_address_state: shippingAddress.region,
-      hs_shipping_address_street: shippingAddress.street
-    },
-    associations: [
-      {
-        to: {
-          id: 34096810229
-        },
-        types: [
-          {
-            associationCategory: "HUBSPOT_DEFINED",
-            associationTypeId: 513 // Item to Order
-          }
-        ]
-      }
-    ]
+      hs_shipping_address_street: shippingAddress.street,
+      hs_shipping_address_postal_code: shippingAddress.postcode,
+      hs_shipping_address_country: shippingAddress.country_id,
+      hs_total_price: data.grand_total,
+      hs_subtotal_price: data.subtotal,
+      hs_tax: data.tax_amount,
+      hs_shipping_cost: data.shipping_amount,
+      hs_order_discount: data.discount_amount,
+      // hs_external_created_date: data.created_at,
+      hs_billing_address_email: data.customer_email,
+      hs_billing_address_firstname: data.customer_firstname,
+      hs_billing_address_lastname: data.customer_lastname,
+      hs_payment_processing_method: data.payment.method
+    }
   }
 
   return transformedData

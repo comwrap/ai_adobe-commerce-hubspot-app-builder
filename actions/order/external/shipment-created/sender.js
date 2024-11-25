@@ -29,7 +29,7 @@ async function sendData (params, transformed, preProcessed) {
       params.COMMERCE_CONSUMER_SECRET,
       params.COMMERCE_ACCESS_TOKEN,
       params.COMMERCE_ACCESS_TOKEN_SECRET,
-      params.data.orderId,
+      params.data.incrementId,
       transformed)
 
     return {
@@ -40,7 +40,7 @@ async function sendData (params, transformed, preProcessed) {
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,
-      message: error.message
+      message: error.response?.body || error.message
 
     }
   }
