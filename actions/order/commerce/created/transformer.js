@@ -10,6 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const {Core} = require("@adobe/aio-sdk");
+const {stringParameters} = require("../../../utils");
+
 /**
  * This function transform the received order data from Adobe commerce to external back-office application
  *
@@ -17,8 +20,40 @@ governing permissions and limitations under the License.
  * @returns {object} - Returns transformed data object
  */
 function transformData (data) {
+  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
+  let shippingAddress = 0;
   // @TODO Here transform the data as needed for 3rd party API
-  const transformedData = data
+  for (const address of data.addresses ) {
+    if (address.entity_id === data.shipping_address_id) {
+      shippingAddress = address;
+      break
+    }
+  }
+
+  const transformedData = {
+    properties: {
+      hs_order_name: data.increment_id,
+      hs_currency_code: data.order_currency_code,
+      hs_source_store: data.store_name,
+      hs_fulfillment_status: "New",
+      hs_shipping_address_city: shippingAddress.city,
+      hs_shipping_address_state: shippingAddress.region,
+      hs_shipping_address_street: shippingAddress.street
+    },
+    associations: [
+      {
+        to: {
+          id: 34096810229
+        },
+        types: [
+          {
+            associationCategory: "HUBSPOT_DEFINED",
+            associationTypeId: 513 // Item to Order
+          }
+        ]
+      }
+    ]
+  }
 
   return transformedData
 }

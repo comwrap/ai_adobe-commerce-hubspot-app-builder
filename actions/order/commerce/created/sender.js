@@ -22,9 +22,28 @@ async function sendData (params, data, preProcessed) {
   // @TODO Here add the logic to send the information to 3rd party
   // @TODO Use params to retrieve need parameters from the environment
   // @TODO in case of error return { success: false, statusCode: <error status code>, message: '<error message>' }
+  const fetch = require('node-fetch');
 
-  return {
-    success: true
+  try {
+    let response = await fetch('https://api.hubapi.com/crm/v3/objects/orders', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${params.HUBSPOT_ACCESS_TOKEN}`
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const responseData = await response.json();
+    return {
+      success: true
+    }
+  } catch (error) {
+    throw new Error(`HTTP error! status: ${error.message}`);
   }
 }
 
