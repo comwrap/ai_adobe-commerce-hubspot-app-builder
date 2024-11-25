@@ -16,12 +16,3 @@ created:
   annotations:
     require-adobe-auth: true
     final: true
-updated:
-  function: updated/index.js
-  web: 'no'
-  runtime: nodejs:20
-  inputs:
-    LOG_LEVEL: debug
-  annotations:
-    require-adobe-auth: true
-    final: true
