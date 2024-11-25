@@ -10,16 +10,83 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const fetch = require("node-fetch");
+const {Core} = require("@adobe/aio-sdk");
+const {stringParameters} = require("../../../utils");
+const { getCommerceCustomerIdByAttribute } = require('../../../customer/search-customer-by-attribute-id')
+
 /**
- * This function hold any logic needed pre sending information to external backoffice application
+ * This function holds any logic needed pre sending information to external backoffice application
  *
- * @param {object} data - Data received before transformation
+ * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
  */
-function preProcess (data, transformed) {
-  // @TODO Here implement any preprocessing needed
+async function preProcess(params, transformed) {
+  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
+
+  let associations = []
+
+  if (params.data.customer_id) {
+    const commerceCustomerId = await getCommerceCustomerIdByAttribute(params, 'contact_id', params.data.customer_id)
+    associations.push({
+      to: {
+        id: commerceCustomerId,
+      },
+      types: [
+        {
+          associationCategory: "HUBSPOT_DEFINED",
+          associationTypeId: 507, // Contact to Order
+        },
+      ],
+    });
+  }
+
+  for (let i = 0; i < params.data.items.length; i++) {
+    const item = params.data.items[i];
+    const body = {
+      properties: {
+        hs_line_item_id: item.id,
+        quantity: item.qty_ordered,
+        // hs_product_id: item.product_id,
+        hs_sku: item.sku,
+        price: item.price,
+        name: item.name,
+      },
+    };
+    try {
+      const response = await fetch('https://api.hubapi.com/crm/v3/objects/line_items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${params.HUBSPOT_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify(body),
+      });
+      const responseData = await response.json();
+      if (responseData.hasOwnProperty('status') && responseData.status === 'error') {
+        throw new Error(`HTTP error! status: ${responseData.message}`);
+      }
+      logger.debug('Response data: ', JSON.stringify(responseData));
+      associations.push({
+        to: {
+          id: responseData.id,
+        },
+        types: [
+          {
+            associationCategory: "HUBSPOT_DEFINED",
+            associationTypeId: 513, // Item to Order
+          },
+        ],
+      });
+    } catch (error) {
+      throw new Error(`HTTP error! status: ${error.message}`);
+    }
+  }
+
+  logger.debug('associations: ', JSON.stringify(associations));
+  return associations;
 }
 
 module.exports = {
-  preProcess
-}
+  preProcess,
+};
