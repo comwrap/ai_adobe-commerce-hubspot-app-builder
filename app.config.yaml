@@ -16,10 +16,6 @@ application:
             annotations:
               require-adobe-auth: true
               final: true
-      #  ingestion:
-      #    license: Apache-2.0
-      #    actions:
-      #      $include: ./actions/ingestion/actions.config.yaml
       # webhook:
       #   license: Apache-2.0
       #   actions:
