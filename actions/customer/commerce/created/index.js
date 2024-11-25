@@ -55,7 +55,7 @@ async function main (params) {
     }
 
     logger.debug(`Postprocess data: ${stringParameters(params)}`)
-    postProcess(params, transformedData, preProcessed, result)
+    await postProcess(params, result)
 
     logger.debug('Process finished successfully')
     return actionSuccessResponse('Customer created successfully')
