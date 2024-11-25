@@ -10,6 +10,9 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const {createContact} = require("../../hubspot-api-client");
+const {Core} = require("@adobe/aio-sdk");
+
 /**
  * This function send the customer created dara to the external back-office application
  *
@@ -18,16 +21,27 @@ governing permissions and limitations under the License.
  * @param {object} preProcessed - result of the pre-process logic if any
  * @returns {object} returns the sending result if needed for post process
  */
-async function sendData (params, data, preProcessed) {
-  // @TODO Here add the logic to send the information to 3rd party
-  // @TODO Use params to retrieve needed parameters from the environment
-  // @TODO in case of error return { success: false, statusCode: <error status code>, message: '<error message>' }
+async function sendData(params, data, preProcessed) {
+    const logger = Core.Logger('customer-commerce-created', {level: params.LOG_LEVEL || 'info'})
+    try {
+        const response = await createContact(params.HUBSPOT_CLIENT_TOKEN, data)
+        logger.debug('Hubspot response: ', response)
 
-  return {
-    success: true
-  }
+        return {
+            success: true,
+            result: response
+        }
+
+    } catch (e) {
+        logger.error('There was an error creating Contact in HubSpot')
+        return {
+            success: false,
+            statusCode: e.errors[0].code,
+            message: e.response
+        }
+    }
 }
 
 module.exports = {
-  sendData
+    sendData
 }

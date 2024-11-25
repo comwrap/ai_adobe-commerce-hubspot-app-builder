@@ -48,6 +48,7 @@ async function main (params) {
 
     logger.debug(`Start sending data: ${JSON.stringify(params)}`)
     const result = await sendData(params, transformedData, preProcessed)
+    logger.debug(`Result from HubSpot request: ${JSON.stringify(result)}`)
     if (!result.success) {
       logger.error(`Send data failed: ${result.message}`)
       return actionErrorResponse(result.statusCode, result.message)

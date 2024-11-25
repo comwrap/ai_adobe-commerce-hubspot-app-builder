@@ -19,6 +19,7 @@
     "@adobe/generator-add-web-assets-exc-react": "^1.0.2",
     "@adobe/generator-app-events-generic": "^2.0.1",
     "@adobe/react-spectrum": "^3.35.1",
+    "@hubspot/api-client": "^12.0.1",
     "@spectrum-icons/workflow": "^4.2.12",
     "ajv": "^8.16.0",
     "cloudevents": "^8.0.0",

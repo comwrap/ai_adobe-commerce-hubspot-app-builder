@@ -13,6 +13,7 @@ created:
   runtime: nodejs:20
   inputs:
     LOG_LEVEL: debug
+    HUBSPOT_CLIENT_TOKEN: $HUBSPOT_CLIENT_TOKEN
   annotations:
     require-adobe-auth: true
     final: true

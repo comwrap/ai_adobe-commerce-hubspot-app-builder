@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 const { Core } = require('@adobe/aio-sdk')
 const { stringParameters, checkMissingRequestInputs } = require('../../../utils')
-const { errorResponse, successResponse } = require('../../../responses')
+const { errorResponse, successResponse, actionSuccessResponse} = require('../../../responses')
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
 
@@ -58,11 +58,16 @@ async function main (params) {
         const createdAt = Date.parse(params.data.value.created_at)
         const updatedAt = Date.parse(params.data.value.updated_at)
         if (createdAt === updatedAt) {
-          logger.info('Invoking created customer')
-          const res = await openwhiskClient.invokeAction(
-            'customer-commerce/created', params.data.value)
-          response = res?.response?.result?.body
-          statusCode = res?.response?.result?.statusCode
+          if (params.data.value?.id) {
+            logger.info('Invoking created customer')
+            const res = await openwhiskClient.invokeAction(
+                'customer-commerce/created', params.data.value)
+            response = res?.response?.result?.body
+            statusCode = res?.response?.result?.statusCode
+          } else {
+            logger.info('Discarding created event without customer Id')
+            return actionSuccessResponse('Discarding created event without customer Id')
+          }
         } else {
           logger.info('Invoking update customer')
           const res = await openwhiskClient.invokeAction(
@@ -70,38 +75,6 @@ async function main (params) {
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         }
-        break
-      }
-      case 'com.adobe.commerce.observer.customer_delete_commit_after': {
-        logger.info('Invoking delete customer')
-        const res = await openwhiskClient.invokeAction(
-          'customer-commerce/deleted', params.data.value)
-        response = res?.response?.result?.body
-        statusCode = res?.response?.result?.statusCode
-        break
-      }
-      case 'com.adobe.commerce.observer.customer_group_save_commit_after': {
-        logger.info('Invoking update customer group')
-        const updateRes = await openwhiskClient.invokeAction(
-          'customer-commerce/group-updated', params.data.value)
-        response = updateRes?.response?.result?.body
-        statusCode = updateRes?.response?.result?.statusCode
-        break
-      }
-      case 'com.adobe.commerce.observer.customer_group_delete_commit_after': {
-        const requiredParams = [
-          'data.value.customer_group_code']
-        const errorMessage = checkMissingRequestInputs(params, requiredParams,
-          [])
-        if (errorMessage) {
-          logger.error(`Invalid request parameters: ${errorMessage}`)
-          return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
-        }
-        logger.info('Invoking delete customer group')
-        const deleteRes = await openwhiskClient.invokeAction(
-          'customer-commerce/group-deleted', params.data.value)
-        response = deleteRes?.response?.result?.body
-        statusCode = deleteRes?.response?.result?.statusCode
         break
       }
       default:

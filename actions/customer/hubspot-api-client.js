@@ -10,20 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-/**
- * This function transform the received customer data from Adobe commerce to external back-office application
- *
- * @param {object} data - Data received from Adobe commerce
- * @returns {object} - Returns transformed data object
- */
-function transformData(data) {
-    return {
-        email: `${data.email}`,
-        firstname: `${data.firstname}`,
-        lastname: `${data.lastname}`,
-    }
+const hubspot = require('@hubspot/api-client');
+
+async function createContact(token, data) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+
+    const properties = data
+    const SimplePublicObjectInputForCreate = { associations: [], properties };
+
+    return await hubspotClient.crm.contacts.basicApi.create(SimplePublicObjectInputForCreate);
 }
 
 module.exports = {
-    transformData
+    createContact
 }
