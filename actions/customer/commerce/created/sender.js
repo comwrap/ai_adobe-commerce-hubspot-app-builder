@@ -24,7 +24,7 @@ const {Core} = require("@adobe/aio-sdk");
 async function sendData(params, data, preProcessed) {
     const logger = Core.Logger('customer-commerce-created', {level: params.LOG_LEVEL || 'info'})
     try {
-        const response = await createContact(params.HUBSPOT_CLIENT_TOKEN, data)
+        const response = await createContact(params.HUBSPOT_ACCESS_TOKEN, data)
         logger.debug('Hubspot response: ', response)
 
         return {
