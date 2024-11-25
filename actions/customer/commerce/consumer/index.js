@@ -55,25 +55,22 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const createdAt = Date.parse(params.data.value.created_at)
-        const updatedAt = Date.parse(params.data.value.updated_at)
-        if (createdAt === updatedAt) {
-          if (params.data.value?.id) {
-            logger.info('Invoking created customer')
-            const res = await openwhiskClient.invokeAction(
-                'customer-commerce/created', params.data.value)
-            response = res?.response?.result?.body
-            statusCode = res?.response?.result?.statusCode
-          } else {
-            logger.info('Discarding created event without customer Id')
-            return actionSuccessResponse('Discarding created event without customer Id')
-          }
-        } else {
+        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
+        if (params.data.value.id && !params.data.value.contact_id) {
+          logger.info('Invoking created customer')
+          const res = await openwhiskClient.invokeAction(
+              'customer-commerce/created', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
+        } else if (params.data.value.id && params.data.value.contact_id) {
           logger.info('Invoking update customer')
           const res = await openwhiskClient.invokeAction(
             'customer-commerce/updated', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
+        } else {
+          logger.info('Discarding created event without customer Id')
+          return actionSuccessResponse('Discarding created event without customer Id')
         }
         break
       }

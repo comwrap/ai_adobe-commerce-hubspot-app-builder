@@ -19,7 +19,6 @@ const { Core } = require('@adobe/aio-sdk')
  * @param {object} result - result data from the sender
  */
 async function postProcess (params, result) {
-  // @TODO Here implement any preprocessing needed
   const logger = Core.Logger('customer-commerce-created', { level: params.LOG_LEVEL || 'info' })
   try {
     const response = await updateCustomer(
