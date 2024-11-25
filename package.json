@@ -34,6 +34,7 @@
     "react-error-boundary": "^4.0.13",
     "react-router-dom": "^6.23.1",
     "regenerator-runtime": "^0.14.1",
+    "request": "^2.88.2",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
@@ -51,6 +52,7 @@
     "test": "jest --passWithNoTests -c ./test/jest.config.js ./test",
     "e2e": "jest --collectCoverage=false --testRegex ./e2e",
     "onboard": "node --no-warnings -e 'require(\"./scripts/onboarding/index.js\").main()'",
+    "onboard-hubspot": "node --no-warnings -e 'require(\"./scripts/onboarding/hubspot/index.js\").main()'",
     "commerce-event-subscribe": "node --no-warnings -e 'require(\"./scripts/commerce-event-subscribe/index.js\").main()'",
     "code-check": "npx eslint 'actions/**/*.js' 'scripts/**/*.js' 'test/**/*.js' 'utils/**/*.js'"
   },

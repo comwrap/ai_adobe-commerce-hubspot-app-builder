@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const {Core} = require("@adobe/aio-sdk");
+
 /**
  * This function send the order created data to the external back-office application
  *
@@ -23,6 +25,10 @@ async function sendData (params, data, preProcessed) {
   // @TODO Use params to retrieve need parameters from the environment
   // @TODO in case of error return { success: false, statusCode: <error status code>, message: '<error message>' }
   const fetch = require('node-fetch');
+  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
+
+  data.associations = preProcessed;
+  logger.debug('data: ' + JSON.stringify(data))
 
   try {
     let response = await fetch('https://api.hubapi.com/crm/v3/objects/orders', {

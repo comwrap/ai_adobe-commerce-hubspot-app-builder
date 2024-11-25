@@ -20,6 +20,8 @@ require('dotenv').config()
  * @returns {object} - returns a response with provider and registrations info
  */
 async function main () {
+
+
   console.log('Starting the process of on-boarding based on you registration choice')
 
   const registrations = require('./config/starter-kit-registrations.json')
