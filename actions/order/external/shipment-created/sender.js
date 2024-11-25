@@ -40,7 +40,7 @@ async function sendData (params, transformed, preProcessed) {
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,
-      message: error.message
+      message: error.response?.body || error.message
 
     }
   }
