@@ -11,6 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const {Core} = require("@adobe/aio-sdk");
+const { updateOrderStatus, orderStatus } = require('../../storage')
 
 /**
  * This function send the order created data to the external back-office application
@@ -41,14 +42,18 @@ async function sendData (params, data, preProcessed) {
     });
 
     if (!response.ok) {
+      await updateOrderStatus(data.increment_id, orderStatus.ERROR + '|' . response.message);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const responseData = await response.json();
+    await response.json();
+
+    await updateOrderStatus(data.increment_id, orderStatus.COMPLETED);
     return {
       success: true
     }
   } catch (error) {
+    await updateOrderStatus(data.increment_id, orderStatus.ERROR + '|' . error.message);
     throw new Error(`HTTP error! status: ${error.message}`);
   }
 }

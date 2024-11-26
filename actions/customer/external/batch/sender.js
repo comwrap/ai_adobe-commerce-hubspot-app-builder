@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const { createCustomer } = require('../../commerce-customer-api-client')
+const { importCustomerBatch } = require('../../commerce-customer-api-client')
 const { HTTP_INTERNAL_ERROR } = require('../../../constants')
 
 /**
@@ -18,18 +18,16 @@ const { HTTP_INTERNAL_ERROR } = require('../../../constants')
  *
  * @returns {object} - returns the result data of sending information to Adobe commerce
  * @param {object} params - include the env params
- * @param {object} transformed - transformed received data
- * @param {object} preProcessed - preprocessed result data
  */
-async function sendData (params, transformed, preProcessed) {
+async function sendData (params, ) {
   try {
-    const response = await createCustomer(
+    const response = await importCustomerBatch(
       params.COMMERCE_BASE_URL,
       params.COMMERCE_CONSUMER_KEY,
       params.COMMERCE_CONSUMER_SECRET,
       params.COMMERCE_ACCESS_TOKEN,
       params.COMMERCE_ACCESS_TOKEN_SECRET,
-      transformed)
+      params.data)
 
     return {
       success: true,

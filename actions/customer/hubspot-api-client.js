@@ -33,7 +33,7 @@ async function updateContact(token, data, contactId) {
 async function getAllContacts(token, data) {
     const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
 
-    return await hubspotClient.crm.contacts.getAll();
+    return await hubspotClient.crm.contacts.getAll(50);
 }
 
 async function getContactAddressProperties(token, contactId) {
