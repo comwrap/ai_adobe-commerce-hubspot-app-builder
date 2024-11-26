@@ -13,9 +13,8 @@ governing permissions and limitations under the License.
 const { Core } = require('@adobe/aio-sdk')
 const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST, HTTP_OK, PUBLISH_EVENT_SUCCESS } = require('../../../constants')
 const { errorResponse, successResponse } = require('../../../responses')
-const uuid = require('uuid')
 const { sendEvent } = require('../../../sendEvent')
-const { getAllContacts} = require("../../hubspot-api-client");
+const { getContactsPage} = require("../../hubspot-api-client");
 const {checkMissingRequestInputs} = require("../../../utils");
 
 /**
@@ -28,11 +27,9 @@ async function main (params) {
   const logger = Core.Logger('customer-external-full-import', { level: params.LOG_LEVEL || 'info' })
 
   const statusCode = HTTP_OK
-  const amountOfProductsToFetch = 10
 
   logger.info('Start full batch import contacts')
   try {
-
 
     // check for missing request input parameters and headers
     const requiredParams = ['batchSize']
@@ -41,51 +38,45 @@ async function main (params) {
       logger.error(`Invalid request parameters: ${errorMessage}`)
       return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
     }
-    const fetchedContacts = await getAllContacts(params.HUBSPOT_ACCESS_TOKEN);
-    logger.info('# Contacts fetched from Hubspot', fetchedContacts.length)
 
-    const eventType = 'be-observer.contacts.batch'
+    const batchSize = params.batchSize
+    let after = undefined
     let counter = 0
     let total = 0
-    const batchSize = params.batchSize
     let batchPayload = []
-    for (const contact of fetchedContacts) {
 
-      const customPayload = {
-        firstname: contact.properties.firstname,
-        lastname: contact.properties.lastname,
-        email: contact.properties.email,
-        contact_id: contact.id,
-        group_id: params.HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID,
-        _website: params.HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
-      }
-      batchPayload.push(customPayload)
-      counter++
-      total++
+      do {
+        const contactsPage = await getContactsPage(params.HUBSPOT_ACCESS_TOKEN, batchSize, after);
 
-      if (counter === batchSize) {
+        // clear Payload and counter
+        counter = 0
+        batchPayload = []
+
+        contactsPage.results.forEach(contact => {
+          const customPayload = {
+            firstname: contact.properties.firstname,
+            lastname: contact.properties.lastname,
+            email: contact.properties.email,
+            contact_id: contact.id,
+            group_id: params.HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID,
+            _website: params.HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
+          }
+          batchPayload.push(customPayload)
+          counter++
+          total++
+        });
+
+        // Publish the batch event
+        const eventType = 'be-observer.contacts.batch'
         const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
-
         if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
           logger.error(`Unable to publish event ${eventType}: Unknown event type`)
           return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
         }
-        // clear Payload and counter
-        counter = 0
-        batchPayload = []
-      }
-    }
 
-    if (batchPayload.length > 0) {
-      const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
-
-      if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
-        logger.error(`Unable to publish event ${eventType}: Unknown event type`)
-        return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
-      }
-    }
-
-    // TODO implement a logic to check if there were errors
+        // Update the `after` cursor for the next page
+        after = contactsPage.paging?.next?.after || null;
+      } while (after); // Continue until there are no more pages
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, `Successfully exported batch events to load ${total} Contacts`)
