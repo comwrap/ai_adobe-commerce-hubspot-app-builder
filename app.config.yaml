@@ -53,6 +53,18 @@ extensions:
               annotations:
                 require-adobe-auth: false
                 final: true
+        order-custom-grid-columns:
+          license: Apache-2.0
+          actions:
+            get-order-grid-columns:
+              function: actions/commerce-ui/orderGridColumns.js
+              web: 'yes'
+              runtime: 'nodejs:16'
+              inputs:
+                LOG_LEVEL: debug
+              annotations:
+                require-adobe-auth: false
+                final: true
 productDependencies:
   - code: COMMC
     minVersion: 2.4.4
