@@ -15,6 +15,8 @@ const { stringParameters, checkMissingRequestInputs } = require('../../../utils'
 const { errorResponse, successResponse, actionSuccessResponse} = require('../../../responses')
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
+const stateLib = require('@adobe/aio-lib-state')
+const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
 
 /**
  * This is the consumer of the events coming from Adobe Commerce related to customer entity.
@@ -24,6 +26,10 @@ const Openwhisk = require('../../../openwhisk')
  */
 async function main (params) {
   const logger = Core.Logger('customer-commerce-consumer', { level: params.LOG_LEVEL || 'info' })
+
+  // Create a state instance
+  const state = await stateLib.init()
+
   try {
     const openwhiskClient = new Openwhisk(params.API_HOST, params.API_AUTH)
 
@@ -42,6 +48,17 @@ async function main (params) {
     }
 
     logger.info('Params type: ', params.type)
+
+    // Detect infinite loop and break it
+    const infiniteLoopEventTypes = [
+      'com.adobe.commerce.observer.customer_save_commit_after'
+    ]
+    const infiniteLoopKey = `customer_${params.data.value.email}`
+    const fingerPrintData = { email: params.data.value.email }
+    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+      logger.info(`Infinite loop break for customer ${params.data.email}`)
+      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    }
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -84,6 +101,9 @@ async function main (params) {
       logger.error(`Error response: ${response.error}`)
       return errorResponse(statusCode, response.error)
     }
+
+    // Prepare to detect infinite loop on subsequent events
+    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)
