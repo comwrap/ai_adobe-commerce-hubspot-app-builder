@@ -25,5 +25,5 @@ function transformData(data) {
 }
 
 module.exports = {
-  transformData,
+  transformData
 };

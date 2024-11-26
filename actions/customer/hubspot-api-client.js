@@ -22,19 +22,14 @@ async function createContact(token, data) {
 }
 
 async function updateContact(token, data, commerceHubspotIdField) {
-    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`})
+    const properties = data
 
-    const SimplePublicObjectInput = { associations: [], data };
-    const contactId = data[commerceHubspotIdField];
+    const SimplePublicObjectInput = { properties }
+    const contactId = data[commerceHubspotIdField]
 
-    try {
-    const apiResponse = await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput);
-    console.log(JSON.stringify(apiResponse, null, 2));
-    } catch (e) {
-    e.message === 'HTTP request failed'
-        ? console.error(JSON.stringify(e.response, null, 2))
-        : console.error(e)
-    }
+
+    return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }
 
 async function getAllContacts(token, data) {

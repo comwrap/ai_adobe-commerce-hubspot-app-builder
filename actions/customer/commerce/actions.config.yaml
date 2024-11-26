@@ -29,6 +29,8 @@ updated:
   runtime: nodejs:20
   inputs:
     LOG_LEVEL: debug
+    HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
+    COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
   annotations:
     require-adobe-auth: true
     final: true
