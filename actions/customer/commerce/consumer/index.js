@@ -17,7 +17,7 @@ const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../con
 const Openwhisk = require('../../../openwhisk')
 const stateLib = require('@adobe/aio-lib-state')
 const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
-const { getCompanyByExternalId } = require('../../hubspot-api-client')
+const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
 
 /**
  * This is the consumer of the events coming from Adobe Commerce related to customer entity.
@@ -96,9 +96,10 @@ async function main (params) {
       }
       case "com.adobe.commerce.observer.company_save_commit_after":
         //check in hubspot if the company already exist
-        const company = await getCompanyByExternalId(params.data.id);
-        logger.info('get Company:' + JSON.stringify(company));
-        if (company.length > 0) {
+        const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id);
+        logger.info('companyHubspotId:' + companyHubspotId);
+        params.data.value.hubspotId = companyHubspotId;
+        if (companyHubspotId == null) {
           logger.info('Invoking created company')
           const res = await openwhiskClient.invokeAction(
               'customer-commerce/company-created', params.data.value)

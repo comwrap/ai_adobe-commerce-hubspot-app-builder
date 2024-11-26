@@ -18,9 +18,7 @@ governing permissions and limitations under the License.
  */
 function transformData(data) {
   return {
-    email: `${data.email}`,
-    firstname: `${data.firstname}`,
-    lastname: `${data.lastname}`,
+    name: `${data.company_name}`,
   };
 }
 
