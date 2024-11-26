@@ -42,14 +42,15 @@ async function main (params) {
      let total = 0
     const batchSize = 50
     let batchPayload = []
-
-
     for (const contact of fetchedContacts) {
 
       const customPayload = {
-        name: contact.response.properties.firstname,
-        lastname: contact.response.properties.lastname,
-        email: contact.response.properties.email
+        firstname: contact.properties.firstname,
+        lastname: contact.properties.lastname,
+        email: contact.properties.email,
+        contact_id: contact.id,
+        group_id: 1,
+        _website: 'base'
       }
       batchPayload.push(customPayload)
       counter++
@@ -67,16 +68,19 @@ async function main (params) {
         counter = 0
         batchPayload = []
       }
+      if (total>50) {
+        break;
+      }
     }
 
-    if (batchPayload.length > 0) {
+    /*if (batchPayload.length > 0) {
       const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
 
       if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
         logger.error(`Unable to publish event ${eventType}: Unknown event type`)
         return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
       }
-    }
+    }*/
 
     // TODO implement a logic to check if there were errors
 

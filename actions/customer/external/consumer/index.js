@@ -45,10 +45,10 @@ async function main (params) {
 
     logger.info(`Params type: ${params.type}`)
     switch (params.type) {
-      case 'be-observer.customer_create': {
-        logger.info('Invoking customer create')
+      case 'be-observer.contacts.batch': {
+        logger.info('Invoking customer batch creation')
         const createRes = await openwhiskClient.invokeAction(
-          'customer-backoffice/created', params.data)
+          'customer-backoffice/batch', params.data)
         response = createRes?.response?.result?.body
         statusCode = createRes?.response?.result?.statusCode
         break
@@ -60,37 +60,9 @@ async function main (params) {
         statusCode = updateRes?.response?.result?.statusCode
         break
       }
-      case 'be-observer.customer_delete': {
-        logger.info('Invoking customer delete')
-        const deleteRes = await openwhiskClient.invokeAction('customer-backoffice/deleted', params.data)
-        response = deleteRes?.response?.result?.body
-        statusCode = deleteRes?.response?.result?.statusCode
-        break
-      }
-      case 'be-observer.customer_group_create': {
-        logger.info('Invoking customer group create')
-        const createRes = await openwhiskClient.invokeAction('customer-backoffice/group-created', params.data)
-        response = createRes?.response?.result?.body
-        statusCode = createRes?.response?.result?.statusCode
-        break
-      }
-      case 'be-observer.customer_group_update': {
-        logger.info('Invoking customer group update')
-        const updateRes = await openwhiskClient.invokeAction('customer-backoffice/group-updated', params.data)
-        response = updateRes?.response?.result?.body
-        statusCode = updateRes?.response?.result?.statusCode
-        break
-      }
-      case 'be-observer.customer_group_delete': {
-        logger.info('Invoking customer group delete')
-        const deleteRes = await openwhiskClient.invokeAction('customer-backoffice/group-deleted', params.data)
-        response = deleteRes?.response?.result?.body
-        statusCode = deleteRes?.response?.result?.statusCode
-        break
-      }
       default:
         logger.error(`Event type not found: ${params.type}`)
-        return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)
+        return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: |${params.type}|`)
     }
 
     if (!response.success) {

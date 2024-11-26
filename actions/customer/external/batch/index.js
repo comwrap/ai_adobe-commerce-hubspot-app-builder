@@ -12,12 +12,9 @@ governing permissions and limitations under the License.
 
 const { Core } = require('@adobe/aio-sdk')
 const { stringParameters } = require('../../../utils')
-const { transformData } = require('./transformer')
 const { sendData } = require('./sender')
 const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST } = require('../../../constants')
-const { validateData } = require('./validator')
-const { preProcess } = require('./pre')
-const { postProcess } = require('./post')
+
 const { actionErrorResponse, actionSuccessResponse } = require('../../../responses')
 
 /**
@@ -33,29 +30,12 @@ async function main (params) {
   logger.debug(`Received params: ${stringParameters(params)}`)
 
   try {
-    logger.debug(`Validate data: ${JSON.stringify(params.data)}`)
-    const validation = validateData(params)
-    if (!validation.success) {
-      logger.error(`Validation failed with error: ${validation.message}`)
-      return actionErrorResponse(HTTP_BAD_REQUEST, validation.message)
-    }
-
-    logger.debug(`Transform data: ${stringParameters(params)}`)
-    const transformed = transformData(params)
-
-    logger.debug(`Preprocess data: ${stringParameters(params)}`)
-    const preProcessed = preProcess(params, transformed)
-
-    logger.debug(`Start sending data: ${JSON.stringify(transformed)}`)
-    const result = await sendData(params, transformed, preProcessed)
+    const result = await sendData(params)
     if (!result.success) {
       logger.error(`Send data failed: ${result.message}`)
       return actionErrorResponse(result.statusCode, result.message)
     }
-
-    logger.debug(`Postprocess data: ${stringParameters(params)}`)
-    postProcess(params, transformed, preProcessed, result)
-
+    return actionSuccessResponse( JSON.stringify(result))
     logger.debug('Process finished successfully')
     return actionSuccessResponse('Customer created successfully')
   } catch (error) {

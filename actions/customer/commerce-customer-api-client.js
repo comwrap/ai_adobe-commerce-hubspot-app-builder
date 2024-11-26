@@ -46,6 +46,48 @@ async function createCustomer (baseUrl, consumerKey, consumerSecret, accessToken
 }
 
 /**
+ * This function call Adobe commerce rest API to create a customer
+ *
+ * @returns {object} - API response object
+ * @param {string} baseUrl - Adobe commerce rest api base url
+ * @param {string} consumerKey - Adobe commerce integration consumer key
+ * @param {string} consumerSecret - Adobe commerce integration consumer secret
+ * @param {string} accessToken - Adobe commerce integration access token
+ * @param {string} accessTokenSecret - Adobe commerce integration access token secret
+ * @param {object} data - Adobe commerce api payload
+ */
+async function importCustomerBatch (baseUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, data) {
+    const client = getCommerceOauthClient(
+        {
+            url: baseUrl,
+            consumerKey,
+            consumerSecret,
+            accessToken,
+            accessTokenSecret
+        },
+        logger
+    )
+
+    const jsonImport = {
+        source: {
+            allowed_error_count:0,
+            entity: 'customer',
+            behaviour: 'add_update',
+            validation_strategy: 'validation-stop-on-errors',
+            items: data
+        }
+    };
+
+    return await client.post(
+        'import/json',
+        JSON.stringify(jsonImport),
+        '',
+        { 'Content-Type': 'application/json' }
+    )
+}
+
+
+/**
  * This function call Adobe commerce rest API to update a customer
  *
  * @returns {object} - API response object
@@ -170,5 +212,6 @@ module.exports = {
   updateCustomer,
   deleteCustomer,
   getCustomer,
-  getCustomerBySearchCriteria
+  getCustomerBySearchCriteria,
+    importCustomerBatch
 }

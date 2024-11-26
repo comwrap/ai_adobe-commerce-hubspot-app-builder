@@ -40,7 +40,7 @@ async function updateContact(token, data, commerceHubspotIdField) {
 async function getAllContacts(token, data) {
     const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
 
-    return await hubspotClient.crm.contacts.getAll();
+    return await hubspotClient.crm.contacts.getAll(50);
 }
 
 module.exports = {
