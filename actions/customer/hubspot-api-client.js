@@ -56,14 +56,14 @@ async function getContactAddressProperties(token, contactId) {
     return await hubspotClient.crm.contacts.basicApi.getById(contactId, properties);
 }
 
-async function getCompanyByExternalId(token, externalId) {
+async function getCompanyIdByExternalId(token, externalId) {
     const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
 
     const properties = [
         "id"
     ];
 
-    return await hubspotClient.crm.companies.searchApi.doSearch({
+    const searchRequest = {
         "filterGroups": [
             {
                 "filters": [
@@ -75,7 +75,12 @@ async function getCompanyByExternalId(token, externalId) {
                 ]
             }
         ]
-    })
+    };
+    const results = await hubspotClient.crm.companies.searchApi.doSearch(searchRequest)
+    if(results.results.length == 0) {
+        return null;
+    }
+    return results.results[0].id;
 }
 
 module.exports = {
@@ -85,5 +90,5 @@ module.exports = {
     getContactAddressProperties,
     createCompany,
     updateCompany,
-    getCompanyByExternalId
+    getCompanyIdByExternalId
 }

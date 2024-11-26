@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const {updateContact} = require("../../hubspot-api-client");
+const {updateCompany} = require("../../hubspot-api-client");
 const {Core} = require("@adobe/aio-sdk");
 /**
  * This function send the customer updated dara to the external back-office application
@@ -22,9 +22,10 @@ const {Core} = require("@adobe/aio-sdk");
 async function sendData (params, data, preProcessed) {
   const logger = Core.Logger('customer-commerce-updated', {level: params.LOG_LEVEL || 'info'})
   try {
-      const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
-      logger.debug('Contact Id to update ', contactId)
-      const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId)
+      logger.debug('params', params)
+      logger.debug('Company Id to update ', params.data.hubspotId)
+      logger.debug('properties to send hubspot ', data)
+      const response = await updateCompany(params.HUBSPOT_ACCESS_TOKEN, data, params.data.hubspotId)
       logger.debug('Hubspot response: ', response)
       logger.debug('Contact id:', response.id)
 
@@ -34,7 +35,7 @@ async function sendData (params, data, preProcessed) {
       }
 
   } catch (e) {
-      logger.error('There was an error updating Contact in HubSpot')
+      logger.error('There was an error updating Company in HubSpot')
       logger.error('Error ', e)
       e.message === 'HTTP request failed'
           ? logger.error(JSON.stringify(e.response, null, 2))
