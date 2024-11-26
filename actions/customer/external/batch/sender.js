@@ -37,7 +37,7 @@ async function sendData (params, ) {
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,
-      message: error.message
+      message: error.response?.body || error.message
 
     }
   }

@@ -36,8 +36,8 @@ batch:
   annotations:
     require-adobe-auth: true
     final: true
-full-batch:
-  function: full-batch/index.js
+full-import:
+  function: full-import/index.js
   web: 'yes'
   runtime: nodejs:20
   inputs:
@@ -53,7 +53,9 @@ full-batch:
     IO_WORKSPACE_ID: $IO_WORKSPACE_ID
     AIO_runtime_namespace: $AIO_RUNTIME_NAMESPACE
     HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
+    HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID: $HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID
+    HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE: $HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
   annotations:
-    require-adobe-auth: false
+    require-adobe-auth: true
     final: true
 
