@@ -21,10 +21,6 @@ extensions:
               annotations:
                 require-adobe-auth: true
                 final: true
-        # webhook:
-        #   license: Apache-2.0
-        #   actions:
-        #     $include: ./actions/webhook/actions.config.yaml
         customer-commerce:
           license: Apache-2.0
           actions:
