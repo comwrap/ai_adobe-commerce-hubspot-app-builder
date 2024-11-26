@@ -7,20 +7,6 @@ consumer:
   annotations:
     require-adobe-auth: true
     final: true
-created:
-  function: created/index.js
-  web: 'no'
-  runtime: nodejs:20
-  inputs:
-    LOG_LEVEL: debug
-    COMMERCE_BASE_URL: $COMMERCE_BASE_URL
-    COMMERCE_CONSUMER_KEY: $COMMERCE_CONSUMER_KEY
-    COMMERCE_CONSUMER_SECRET: $COMMERCE_CONSUMER_SECRET
-    COMMERCE_ACCESS_TOKEN: $COMMERCE_ACCESS_TOKEN
-    COMMERCE_ACCESS_TOKEN_SECRET: $COMMERCE_ACCESS_TOKEN_SECRET
-  annotations:
-    require-adobe-auth: true
-    final: true
 updated:
   function: updated/index.js
   web: 'no'
@@ -35,17 +21,24 @@ updated:
   annotations:
     require-adobe-auth: true
     final: true
-deleted:
-  function: deleted/index.js
-  web: 'no'
+full-batch:
+  function: full-batch/index.js
+  web: 'yes'
   runtime: nodejs:20
   inputs:
     LOG_LEVEL: debug
-    COMMERCE_BASE_URL: $COMMERCE_BASE_URL
-    COMMERCE_CONSUMER_KEY: $COMMERCE_CONSUMER_KEY
-    COMMERCE_CONSUMER_SECRET: $COMMERCE_CONSUMER_SECRET
-    COMMERCE_ACCESS_TOKEN: $COMMERCE_ACCESS_TOKEN
-    COMMERCE_ACCESS_TOKEN_SECRET: $COMMERCE_ACCESS_TOKEN_SECRET
+    OAUTH_ORG_ID: $OAUTH_ORG_ID
+    OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+    OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET
+    OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+    OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+    IO_MANAGEMENT_BASE_URL: $IO_MANAGEMENT_BASE_URL
+    IO_CONSUMER_ID: $IO_CONSUMER_ID
+    IO_PROJECT_ID: $IO_PROJECT_ID
+    IO_WORKSPACE_ID: $IO_WORKSPACE_ID
+    AIO_runtime_namespace: $AIO_RUNTIME_NAMESPACE
+    HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
   annotations:
-    require-adobe-auth: true
+    require-adobe-auth: false
     final: true
+

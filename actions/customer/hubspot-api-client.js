@@ -21,6 +21,13 @@ async function createContact(token, data) {
     return await hubspotClient.crm.contacts.basicApi.create(SimplePublicObjectInputForCreate);
 }
 
+async function getAllContacts(token, data) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+
+    return await hubspotClient.crm.contacts.getAll();
+}
+
 module.exports = {
-    createContact
+    createContact,
+    getAllContacts
 }

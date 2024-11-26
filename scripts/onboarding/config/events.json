@@ -13,6 +13,15 @@
           }
         }
       }
+    },
+    "backoffice": {
+      "be-observer.contacts.batch": {
+        "sampleEventTemplate": [{
+          "name": "name",
+          "lastname": "111111",
+          "email": "0000001@aaa.com"
+        }]
+      }
     }
   },
   "order": {
