@@ -72,7 +72,7 @@ async function importCustomerBatch (baseUrl, consumerKey, consumerSecret, access
         source: {
             allowed_error_count:0,
             entity: 'customer',
-            behaviour: 'add_update',
+            behavior: 'add_update',
             validation_strategy: 'validation-stop-on-errors',
             items: data
         }

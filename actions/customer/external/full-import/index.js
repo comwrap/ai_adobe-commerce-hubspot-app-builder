@@ -16,6 +16,7 @@ const { errorResponse, successResponse } = require('../../../responses')
 const uuid = require('uuid')
 const { sendEvent } = require('../../../sendEvent')
 const { getAllContacts} = require("../../hubspot-api-client");
+const {checkMissingRequestInputs} = require("../../../utils");
 
 /**
  * This is the consumer of the events coming from External back-office applications related to product entity.
@@ -24,23 +25,29 @@ const { getAllContacts} = require("../../hubspot-api-client");
  * @param {object} params - includes the env params, type and the data of the event
  */
 async function main (params) {
-  const logger = Core.Logger('customer-external-full-btach', { level: params.LOG_LEVEL || 'info' })
+  const logger = Core.Logger('customer-external-full-import', { level: params.LOG_LEVEL || 'info' })
 
   const statusCode = HTTP_OK
   const amountOfProductsToFetch = 10
 
   logger.info('Start full batch import contacts')
   try {
-    const fetchedContacts = await getAllContacts(params.HUBSPOT_ACCESS_TOKEN);
 
+
+    // check for missing request input parameters and headers
+    const requiredParams = ['batchSize']
+    const errorMessage = checkMissingRequestInputs(params, requiredParams, [])
+    if (errorMessage) {
+      logger.error(`Invalid request parameters: ${errorMessage}`)
+      return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
+    }
+    const fetchedContacts = await getAllContacts(params.HUBSPOT_ACCESS_TOKEN);
     logger.info('# Contacts fetched from Hubspot', fetchedContacts.length)
 
     const eventType = 'be-observer.contacts.batch'
-    const jobId = uuid.v4()
-
     let counter = 0
-     let total = 0
-    const batchSize = 50
+    let total = 0
+    const batchSize = params.batchSize
     let batchPayload = []
     for (const contact of fetchedContacts) {
 
@@ -49,8 +56,8 @@ async function main (params) {
         lastname: contact.properties.lastname,
         email: contact.properties.email,
         contact_id: contact.id,
-        group_id: 1,
-        _website: 'base'
+        group_id: params.HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID,
+        _website: params.HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
       }
       batchPayload.push(customPayload)
       counter++
@@ -63,24 +70,20 @@ async function main (params) {
           logger.error(`Unable to publish event ${eventType}: Unknown event type`)
           return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
         }
-
         // clear Payload and counter
         counter = 0
         batchPayload = []
       }
-      if (total>50) {
-        break;
-      }
     }
 
-    /*if (batchPayload.length > 0) {
+    if (batchPayload.length > 0) {
       const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
 
       if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
         logger.error(`Unable to publish event ${eventType}: Unknown event type`)
         return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
       }
-    }*/
+    }
 
     // TODO implement a logic to check if there were errors
 
