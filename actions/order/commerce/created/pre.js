@@ -9,12 +9,11 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-const fetch = require("node-fetch");
-const {Core} = require("@adobe/aio-sdk");
-const {stringParameters} = require("../../../utils");
-const { getCustomer } = require('../../../customer/commerce-customer-api-client')
-const { updateOrderStatus, orderStatus } = require('../../storage')
+const fetch = require('node-fetch');
+const { getCustomer } = require('../../../customer/commerce-customer-api-client');
+const { updateOrderStatus, orderStatus } = require('../../storage');
+const { Core } = require('@adobe/aio-sdk');
+const logger = Core.Logger('order-custom-grid-columns', { level: 'error' });
 
 /**
  * This function holds any logic needed pre sending information to external backoffice application
@@ -23,11 +22,16 @@ const { updateOrderStatus, orderStatus } = require('../../storage')
  * @param {object} transformed - Transformed received data
  */
 async function preProcess(params, transformed) {
-  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
+  await updateOrderStatus(params.data.increment_id, orderStatus.IN_PROGRESS);
 
-  await updateOrderStatus(params.data.increment_id, orderStatus.IN_PROGRESS)
+  const customerAssociations = await getCustomerAssociations(params);
+  const itemAssociations = await getItemAssociations(params);
 
-  let associations = []
+  return [...customerAssociations, ...itemAssociations];
+}
+
+async function getCustomerAssociations(params) {
+  let associations = [];
 
   if (params.data.customer_id) {
     const commerceCustomer = await getCustomer(
@@ -37,42 +41,40 @@ async function preProcess(params, transformed) {
         params.COMMERCE_ACCESS_TOKEN,
         params.COMMERCE_ACCESS_TOKEN_SECRET,
         params.data.customer_id
-    )
-    let contactId = null;
-    commerceCustomer.custom_attributes.forEach((attribute) => {
-      if (attribute.attribute_code === params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD) {
-        contactId = attribute.value;
-      }
-    });
+    );
+
+    const contactId = commerceCustomer.custom_attributes.find(
+        (attribute) => attribute.attribute_code === params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+    )?.value;
+
     if (contactId) {
       associations.push({
-        to: {
-          id: contactId,
-        },
-        types: [
-          {
-            associationCategory: "HUBSPOT_DEFINED",
-            associationTypeId: 507, // Contact to Order
-          },
-        ],
+        to: { id: contactId },
+        types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 507 }],
       });
     }
   }
 
-  for (let i = 0; i < params.data.items.length; i++) {
-    const item = params.data.items[i];
+  return associations;
+}
+
+async function getItemAssociations(params) {
+  let associations = [];
+  let response = null;
+
+  for (const item of params.data.items) {
     const body = {
       properties: {
         hs_line_item_id: item.id,
         quantity: item.qty_ordered,
-        // hs_product_id: item.product_id,
         hs_sku: item.sku,
         price: item.price,
         name: item.name,
       },
     };
+
     try {
-      const response = await fetch('https://api.hubapi.com/crm/v3/objects/line_items', {
+      response = await fetch('https://api.hubapi.com/crm/v3/objects/line_items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,31 +82,24 @@ async function preProcess(params, transformed) {
         },
         body: JSON.stringify(body),
       });
-      const responseData = await response.json();
-      if (responseData.hasOwnProperty('status') && responseData.status === 'error') {
-        throw new Error(`HTTP error! status: ${responseData.message}`);
-      }
-      logger.debug('Response data: ', JSON.stringify(responseData));
-      associations.push({
-        to: {
-          id: responseData.id,
-        },
-        types: [
-          {
-            associationCategory: "HUBSPOT_DEFINED",
-            associationTypeId: 513, // Item to Order
-          },
-        ],
-      });
     } catch (error) {
-      throw new Error(`HTTP error! status: ${error.message}`);
+      logger.error(`There was en error during line item creation. Error message: ${error.message}`);
+      throw new Error(`There was en error during line item creation. Error message: ${error.message}`);
     }
+
+    const responseData = await response.json();
+    if (responseData.status === 'error') {
+      logger.error(`There was en error during line item creation. Error message: ${responseData.message}`);
+      throw new Error(`There was en error during line item creation. Error message: ${responseData.message}`);
+    }
+
+    associations.push({
+      to: { id: responseData.id },
+      types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 513 }],
+    });
   }
 
-  logger.debug('associations: ', JSON.stringify(associations));
   return associations;
 }
 
-module.exports = {
-  preProcess,
-};
+module.exports = { preProcess };

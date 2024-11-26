@@ -9,23 +9,40 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+const { getOrderStatuses } = require('../order/storage');
+const { Core } = require('@adobe/aio-sdk');
+const logger = Core.Logger('order-custom-grid-columns', { level: 'error' });
 
-const { getOrderStatuses } = require('../order/storage')
-
+/**
+ * Main function to get order grid columns with their statuses.
+ *
+ * @returns {object} Response object containing status code and order grid columns.
+ */
 export async function main() {
-    let orderGridColumns = {
-        orderGridColumns: {}
-    }
+  const orderGridColumns = {
+    orderGridColumns: {}
+  };
+
+  try {
     const statuses = await getOrderStatuses();
+
     for (const incrementId in statuses) {
-        const status = statuses.incrementId
+      if (statuses.hasOwnProperty(incrementId)) {
         orderGridColumns.orderGridColumns[incrementId] = {
-            hubspot_export_status: status
-        }
+          hubspot_export_status: statuses[incrementId]
+        };
+      }
     }
 
     return {
-        statusCode: 200,
-        body: orderGridColumns,
-    }
+      statusCode: 200,
+      body: orderGridColumns
+    };
+  } catch (error) {
+    logger.error(`There was en error during order export status retrieval. Error message: ${error.message}`);
+    return {
+      statusCode: 500,
+      body: { error: `There was en error during order export status retrieval. Error message: ${error.message}` }
+    };
+  }
 }

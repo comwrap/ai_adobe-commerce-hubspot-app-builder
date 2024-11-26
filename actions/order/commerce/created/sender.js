@@ -9,30 +9,24 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-
-const {Core} = require("@adobe/aio-sdk");
-const { updateOrderStatus, orderStatus } = require('../../storage')
+const fetch = require('node-fetch');
+const { updateOrderStatus, orderStatus } = require('../../storage');
+const { Core } = require('@adobe/aio-sdk');
+const logger = Core.Logger('order-commerce-created', { level: 'error' });
 
 /**
- * This function send the order created data to the external back-office application
+ * Sends the order created data to the external back-office application.
  *
- * @param {object} params - include the env params
- * @param {object} data - order data
- * @param {object} preProcessed - result of the pre-process logic if any
- * @returns {object} returns the sending result if needed for post process
+ * @param {object} params - Environment parameters.
+ * @param {object} data - Order data.
+ * @param {object} preProcessed - Result of the pre-process logic, if any.
+ * @returns {object} Returns the sending result if needed for post-process.
  */
-async function sendData (params, data, preProcessed) {
-  // @TODO Here add the logic to send the information to 3rd party
-  // @TODO Use params to retrieve need parameters from the environment
-  // @TODO in case of error return { success: false, statusCode: <error status code>, message: '<error message>' }
-  const fetch = require('node-fetch');
-  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
-
+async function sendData(params, data, preProcessed) {
   data.associations = preProcessed;
-  logger.debug('data: ' + JSON.stringify(data))
 
   try {
-    let response = await fetch('https://api.hubapi.com/crm/v3/objects/orders', {
+    const response = await fetch('https://api.hubapi.com/crm/v3/objects/orders', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -40,24 +34,26 @@ async function sendData (params, data, preProcessed) {
       },
       body: JSON.stringify(data)
     });
+    const responseData = await response.json();
 
     if (!response.ok) {
-      await updateOrderStatus(data.increment_id, orderStatus.ERROR + '|' . response.message);
-      throw new Error(`HTTP error! status: ${response.status}`);
+      await updateOrderStatus(params.data.increment_id, `${orderStatus.ERROR}`);
+      logger.error(`There was en error during synchronization. Error message: ${responseData.message}`);
+      return {
+        success: false,
+        statusCode: 500,
+        body: { error: `There was en error during synchronization. Error message: ${responseData.message}` }
+      };
     }
 
-    await response.json();
-
-    await updateOrderStatus(data.increment_id, orderStatus.COMPLETED);
+    await updateOrderStatus(params.data.increment_id, orderStatus.COMPLETED);
     return {
       success: true
-    }
+    };
   } catch (error) {
-    await updateOrderStatus(data.increment_id, orderStatus.ERROR + '|' . error.message);
+    await updateOrderStatus(params.data.increment_id, `${orderStatus.ERROR}`);
     throw new Error(`HTTP error! status: ${error.message}`);
   }
 }
 
-module.exports = {
-  sendData
-}
+module.exports = { sendData };
