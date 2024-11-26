@@ -4,7 +4,31 @@
       "name": "observer.customer_save_commit_after",
       "fields": [
         {
-            "name": "*"
+          "name": "id"
+        },
+        {
+          "name": "email"
+        },
+        {
+          "name": "firstname"
+        },
+        {
+          "name": "lastname"
+        },
+        {
+          "name": "addresses[].street_full"
+        },
+        {
+          "name": "addresses[].region"
+        },
+        {
+          "name": "addresses[].region_code"
+        },
+        {
+          "name": "addresses[].region_id"
+        },
+        {
+          "name": "addresses[].country"
         }
       ]
     }
