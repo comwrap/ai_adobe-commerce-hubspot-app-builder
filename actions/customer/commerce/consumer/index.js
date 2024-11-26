@@ -75,22 +75,23 @@ async function main (params) {
 
         const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
 
-        if (params.data.value.id && (!params.data.value.hasOwnProperty(contactIdField)
-            || (params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] !== ""))) {
-          logger.info('Invoking created customer')
-          const res = await openwhiskClient.invokeAction(
-              'customer-commerce/created', params.data.value)
-          response = res?.response?.result?.body
-          statusCode = res?.response?.result?.statusCode
-        } else if (params.data.value.id && params.data.value.hasOwnProperty(contactIdField)) {
-          logger.info('Invoking update customer')
-          const res = await openwhiskClient.invokeAction(
-            'customer-commerce/updated', params.data.value)
-          response = res?.response?.result?.body
-          statusCode = res?.response?.result?.statusCode
+        const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === "";
+
+        if (params.data.value.id) {
+          if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
+            logger.info('Invoking created customer');
+            const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value);
+            response = res?.response?.result?.body;
+            statusCode = res?.response?.result?.statusCode;
+          } else {
+            logger.info('Invoking update customer');
+            const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value);
+            response = res?.response?.result?.body;
+            statusCode = res?.response?.result?.statusCode;
+          }
         } else {
-          logger.info('Discarding customer saved event without customer Id')
-          return actionSuccessResponse('Discarding customer saved event without customer Id')
+          logger.info('Discarding customer saved event without customer Id');
+          return actionSuccessResponse('Discarding customer saved event without customer Id');
         }
         break
       }
