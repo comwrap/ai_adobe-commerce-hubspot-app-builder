@@ -14,6 +14,7 @@ const fetch = require("node-fetch");
 const {Core} = require("@adobe/aio-sdk");
 const {stringParameters} = require("../../../utils");
 const { getCustomer } = require('../../../customer/commerce-customer-api-client')
+const { updateOrderStatus, orderStatus } = require('../../storage')
 
 /**
  * This function holds any logic needed pre sending information to external backoffice application
@@ -23,6 +24,8 @@ const { getCustomer } = require('../../../customer/commerce-customer-api-client'
  */
 async function preProcess(params, transformed) {
   const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
+
+  await updateOrderStatus(params.data.increment_id, orderStatus.IN_PROGRESS)
 
   let associations = []
 
