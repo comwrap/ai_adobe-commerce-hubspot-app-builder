@@ -10,25 +10,17 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-export async function main() {
+const { getOrderStatuses } = require('../order/storage')
 
-    const orderGridColumns = {
-        "orderGridColumns": {
-            "000000031": {
-                "hubspot_export_status": "<b>value_1</b>"
-            },
-            "000000030": {
-                "hubspot_export_status": 1
-            },
-            "000000029": {
-                "hubspot_export_status": "value_3"
-            },
-            "000000028": {
-                "hubspot_export_status": "value_1"
-            },
-            "*": {
-                "hubspot_export_status": "default"
-            }
+export async function main() {
+    let orderGridColumns = {
+        orderGridColumns: {}
+    }
+    const statuses = await getOrderStatuses();
+    for (const incrementId in statuses) {
+        const status = statuses.incrementId
+        orderGridColumns.orderGridColumns[incrementId] = {
+            hubspot_export_status: status
         }
     }
 
