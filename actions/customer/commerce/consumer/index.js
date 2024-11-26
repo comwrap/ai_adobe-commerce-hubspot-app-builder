@@ -75,7 +75,8 @@ async function main (params) {
 
         const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
 
-        if (params.data.value.id && !params.data.value.hasOwnProperty(contactIdField)) {
+        if (params.data.value.id && (!params.data.value.hasOwnProperty(contactIdField)
+            || (params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] !== ""))) {
           logger.info('Invoking created customer')
           const res = await openwhiskClient.invokeAction(
               'customer-commerce/created', params.data.value)
