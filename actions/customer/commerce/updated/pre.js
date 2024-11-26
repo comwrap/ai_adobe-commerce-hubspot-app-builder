@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 const {getCustomer} = require("../../commerce-customer-api-client");
 const {getContactAddressProperties} = require("../../hubspot-api-client");
+const {Core} = require("@adobe/aio-sdk");
 
 /**
  * This function hold any logic needed pre sending information to external backoffice application
@@ -20,6 +21,7 @@ const {getContactAddressProperties} = require("../../hubspot-api-client");
  * @param {object} transformed - Transformed received data
  */
 async function preProcess(params, transformed) {
+    const logger = Core.Logger('customer-commerce-updated', {level: params.LOG_LEVEL || 'info'})
     if (!params.data.id) {
         return transformed;
     }
@@ -38,6 +40,7 @@ async function preProcess(params, transformed) {
         return transformed;
     }
 
+    logger.debug('Default billing address: ', defaultBillingAddress);
     const contactAddressMapped = {
         address: defaultBillingAddress.street,
         city: defaultBillingAddress.city,
@@ -47,6 +50,7 @@ async function preProcess(params, transformed) {
     };
 
     const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD];
+    logger.debug('Contact Id to update in preProcess ', contactId);
     const contactProperties = await getContactAddressProperties(params.HUBSPOT_ACCESS_TOKEN, contactId);
     const currentContactAddress = {
         address: contactProperties.properties.address,
@@ -55,6 +59,8 @@ async function preProcess(params, transformed) {
         zip: contactProperties.properties.zip,
         country: contactProperties.properties.country
     };
+
+    logger.debug('Current contact address in HubSpot: ', currentContactAddress);
 
     if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
         return transformed;
