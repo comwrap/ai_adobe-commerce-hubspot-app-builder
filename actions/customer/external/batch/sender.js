@@ -29,16 +29,24 @@ async function sendData (params, ) {
       params.COMMERCE_ACCESS_TOKEN_SECRET,
       params.data)
 
+    if (response?.errors) {
+      return {
+        success: false,
+        statusCode: response?.code || HTTP_INTERNAL_ERROR,
+        message: response?.message
+      }
+    }
+
     return {
       success: true,
       message: response
     }
+
   } catch (error) {
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,
       message: error.response?.body || error.message
-
     }
   }
 }

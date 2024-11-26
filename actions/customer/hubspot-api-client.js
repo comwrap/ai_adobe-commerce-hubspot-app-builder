@@ -36,10 +36,13 @@ async function updateCompany(token, data, contactId) {
     return await hubspotClient.crm.companies.basicApi.update(contactId, SimplePublicObjectInput)
 }
 
-async function getAllContacts(token, data) {
+async function getContactsPage(token, limit, after) {
     const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
 
-    return await hubspotClient.crm.contacts.getAll(50);
+    return await hubspotClient.crm.contacts.basicApi.getPage(
+        limit,   // Number of records per page
+        after   // Cursor for pagination
+    );
 }
 
 async function getContactAddressProperties(token, contactId) {
@@ -85,7 +88,7 @@ async function getCompanyIdByExternalId(token, externalId) {
 
 module.exports = {
     createContact,
-    getAllContacts,
+    getContactsPage,
     updateContact,
     getContactAddressProperties,
     createCompany,
