@@ -21,20 +21,13 @@ async function createContact(token, data) {
     return await hubspotClient.crm.contacts.basicApi.create(SimplePublicObjectInputForCreate);
 }
 
-async function updateContact(token, data, commerceHubspotIdField) {
-    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+async function updateContact(token, data, contactId) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`})
+    const properties = data
 
-    const SimplePublicObjectInput = { associations: [], data };
-    const contactId = data[commerceHubspotIdField];
+    const SimplePublicObjectInput = { properties }
 
-    try {
-    const apiResponse = await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput);
-    console.log(JSON.stringify(apiResponse, null, 2));
-    } catch (e) {
-    e.message === 'HTTP request failed'
-        ? console.error(JSON.stringify(e.response, null, 2))
-        : console.error(e)
-    }
+    return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }
 
 async function getAllContacts(token, data) {
@@ -43,8 +36,23 @@ async function getAllContacts(token, data) {
     return await hubspotClient.crm.contacts.getAll(50);
 }
 
+async function getContactAddressProperties(token, contactId) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+
+    const properties = [
+        "address",
+        "city",
+        "state",
+        "zip",
+        "country"
+    ];
+
+    return await hubspotClient.crm.contacts.basicApi.getById(contactId, properties);
+}
+
 module.exports = {
     createContact,
     getAllContacts,
-    updateContact
+    updateContact,
+    getContactAddressProperties
 }

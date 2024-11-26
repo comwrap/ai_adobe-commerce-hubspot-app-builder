@@ -4,7 +4,7 @@
       "name": "observer.customer_save_commit_after",
       "fields": [
         {
-            "name": "*"
+          "name": "*"
         }
       ]
     }

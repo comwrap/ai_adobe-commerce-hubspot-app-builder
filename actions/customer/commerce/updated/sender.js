@@ -20,12 +20,11 @@ const {Core} = require("@adobe/aio-sdk");
  * @returns {object} returns the sending result if needed for post process
  */
 async function sendData (params, data, preProcessed) {
-  // @TODO Here add the logic to send the information to 3rd party
-  // @TODO Use params to retrieve need parameters from the environment
-  // @TODO in case of error return { success: false, statusCode: <error status code>, message: '<error message>' }
   const logger = Core.Logger('customer-commerce-updated', {level: params.LOG_LEVEL || 'info'})
   try {
-      const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, data, params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD)
+      const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
+      logger.debug('Contact Id to update ', contactId)
+      const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId)
       logger.debug('Hubspot response: ', response)
       logger.debug('Contact id:', response.id)
 
@@ -36,10 +35,14 @@ async function sendData (params, data, preProcessed) {
 
   } catch (e) {
       logger.error('There was an error updating Contact in HubSpot')
+      logger.error('Error ', e)
+      e.message === 'HTTP request failed'
+          ? logger.error(JSON.stringify(e.response, null, 2))
+          : logger.error(e)
       return {
           success: false,
           statusCode: 400,
-          message: e.response
+          message: e
       }
   }
 }
