@@ -15,10 +15,11 @@ const {Core} = require("@adobe/aio-sdk");
  * This function send the customer updated dara to the external back-office application
  *
  * @param {object} params - include the env params
+ * @param {object} data - Customer data
  * @param {object} preProcessed - result of the pre-process logic if any
  * @returns {object} returns the sending result if needed for post process
  */
-async function sendData (params, preProcessed) {
+async function sendData (params, data, preProcessed) {
   const logger = Core.Logger('customer-commerce-updated', {level: params.LOG_LEVEL || 'info'})
   try {
       const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]

@@ -12,6 +12,17 @@
             "updated_at": "2024-08-05 10:03:49"
           }
         }
+      },
+      "com.adobe.commerce.observer.company_save_commit_after": {
+        "sampleEventTemplate": {
+          "value": {
+            "id": "int",
+            "status": "int",
+            "company_name": "string",
+            "legal_name": "string",
+            "company_email": "string"
+          }
+        }
       }
     },
     "backoffice": {
@@ -20,6 +31,18 @@
           "name": "name",
           "lastname": "111111",
           "email": "0000001@aaa.com"
+        }]
+      },
+      "be-observer.customer_update": {
+        "sampleEventTemplate": [{
+          "id": "1",
+          "lastname": "lastname",
+          "firstname": "firstname",
+          "email": "0000001@aaa.com",
+          "city": "Lviv",
+          "country": "Ukraine",
+          "zip": "49000",
+          "address": "Vul. Heroiv UPA"
         }]
       }
     }

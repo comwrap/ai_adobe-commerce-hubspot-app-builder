@@ -5,6 +5,7 @@ consumer:
   inputs:
    LOG_LEVEL: debug
    COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+   COMMERCE_HUBSPOT_COMPANY_ID_FIELD: $COMMERCE_HUBSPOT_COMPANY_ID_FIELD
   annotations:
    require-adobe-auth: true
    final: true
@@ -26,6 +27,38 @@ created:
     final: true
 updated:
   function: updated/index.js
+  web: 'no'
+  runtime: nodejs:20
+  inputs:
+    LOG_LEVEL: debug
+    HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
+    COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+    COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+    COMMERCE_CONSUMER_KEY: $COMMERCE_CONSUMER_KEY
+    COMMERCE_CONSUMER_SECRET: $COMMERCE_CONSUMER_SECRET
+    COMMERCE_ACCESS_TOKEN: $COMMERCE_ACCESS_TOKEN
+    COMMERCE_ACCESS_TOKEN_SECRET: $COMMERCE_ACCESS_TOKEN_SECRET
+  annotations:
+    require-adobe-auth: true
+    final: true
+company-created:
+  function: company-created/index.js
+  web: 'no'
+  runtime: nodejs:20
+  inputs:
+    LOG_LEVEL: debug
+    HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
+    COMMERCE_BASE_URL: $COMMERCE_BASE_URL
+    COMMERCE_CONSUMER_KEY: $COMMERCE_CONSUMER_KEY
+    COMMERCE_CONSUMER_SECRET: $COMMERCE_CONSUMER_SECRET
+    COMMERCE_ACCESS_TOKEN: $COMMERCE_ACCESS_TOKEN
+    COMMERCE_ACCESS_TOKEN_SECRET: $COMMERCE_ACCESS_TOKEN_SECRET
+    COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+  annotations:
+    require-adobe-auth: true
+    final: true
+company-updated:
+  function: company-updated/index.js
   web: 'no'
   runtime: nodejs:20
   inputs:

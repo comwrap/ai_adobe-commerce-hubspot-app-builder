@@ -15,6 +15,9 @@ const { stringParameters, checkMissingRequestInputs } = require('../../../utils'
 const { errorResponse, successResponse, actionSuccessResponse} = require('../../../responses')
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
+const stateLib = require('@adobe/aio-lib-state')
+const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
+const { getCompanyByExternalId } = require('../../hubspot-api-client')
 
 /**
  * This is the consumer of the events coming from Adobe Commerce related to customer entity.
@@ -24,6 +27,10 @@ const Openwhisk = require('../../../openwhisk')
  */
 async function main (params) {
   const logger = Core.Logger('customer-commerce-consumer', { level: params.LOG_LEVEL || 'info' })
+
+  // Create a state instance
+  const state = await stateLib.init()
+
   try {
     const openwhiskClient = new Openwhisk(params.API_HOST, params.API_AUTH)
 
@@ -41,7 +48,18 @@ async function main (params) {
       return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
     }
 
-    logger.info('Params type: ' + params.type)
+    logger.info('Params type: ', params.type)
+
+    // Detect infinite loop and break it
+    const infiniteLoopEventTypes = [
+      'com.adobe.commerce.observer.customer_save_commit_after'
+    ]
+    const infiniteLoopKey = `customer_${params.data.value.email}`
+    const fingerPrintData = { email: params.data.value.email }
+    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+      logger.info(`Infinite loop break for customer ${params.data.email}`)
+      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    }
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -55,8 +73,8 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD; //contact_id
-        logger.debug("ContactId field is: ", contactIdField)
+        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
+
         if (params.data.value.id && !params.data.value.hasOwnProperty(contactIdField)) {
           logger.info('Invoking created customer')
           const res = await openwhiskClient.invokeAction(
@@ -70,11 +88,29 @@ async function main (params) {
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         } else {
-          logger.info('Discarding created event without customer Id')
-          return actionSuccessResponse('Discarding created event without customer Id')
+          logger.info('Discarding customer saved event without customer Id')
+          return actionSuccessResponse('Discarding customer saved event without customer Id')
         }
         break
       }
+      case "com.adobe.commerce.observer.company_save_commit_after":
+        //check in hubspot if the company already exist
+        const company = await getCompanyByExternalId(params.data.id);
+        logger.info('get Company:' + JSON.stringify(company));
+        if (company.length > 0) {
+          logger.info('Invoking created company')
+          const res = await openwhiskClient.invokeAction(
+              'customer-commerce/company-created', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
+        } else {
+          logger.info('Invoking update company')
+          const res = await openwhiskClient.invokeAction(
+              'customer-commerce/company-updated', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
+        }
+        break;
       default:
         logger.error(`Event type not found: ${params.type}`)
         return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)
@@ -84,6 +120,9 @@ async function main (params) {
       logger.error(`Error response: ${response.error}`)
       return errorResponse(statusCode, response.error)
     }
+
+    // Prepare to detect infinite loop on subsequent events
+    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)

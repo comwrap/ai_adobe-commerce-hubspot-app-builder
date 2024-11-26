@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const {createContact} = require("../../hubspot-api-client");
+const {createCompany} = require("../../hubspot-api-client");
 const {Core} = require("@adobe/aio-sdk");
 
 /**
@@ -22,11 +22,11 @@ const {Core} = require("@adobe/aio-sdk");
  * @returns {object} returns the sending result if needed for post process
  */
 async function sendData(params, data, preProcessed) {
-    const logger = Core.Logger('customer-commerce-created', {level: params.LOG_LEVEL || 'info'})
+    const logger = Core.Logger('company-commerce-created', {level: params.LOG_LEVEL || 'info'})
     try {
-        const response = await createContact(params.HUBSPOT_ACCESS_TOKEN, data)
+        const response = await createCompany(params.HUBSPOT_ACCESS_TOKEN, data)
         logger.debug('Hubspot response: ', response)
-        logger.debug('Contact id:', response.id)
+        logger.debug('Company id:', response.id)
 
         return {
             success: true,
@@ -35,6 +35,7 @@ async function sendData(params, data, preProcessed) {
 
     } catch (e) {
         logger.error('There was an error creating Contact in HubSpot')
+        logger.error('Error ', e)
         e.message === 'HTTP request failed'
             ? logger.error(JSON.stringify(e.response, null, 2))
             : logger.error(e)
