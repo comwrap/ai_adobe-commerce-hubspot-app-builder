@@ -54,7 +54,8 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'com.adobe.commerce.observer.customer_save_commit_after'
     ]
-    const infiniteLoopKey = `customer_${params.data.value.email}`
+    const emailWithoutAt = params.data.value.email.replace(/@/g, '')
+    const infiniteLoopKey = `customer_${emailWithoutAt}`
     const fingerPrintData = { email: params.data.value.email }
     if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
       logger.info(`Infinite loop break for customer ${params.data.email}`)
