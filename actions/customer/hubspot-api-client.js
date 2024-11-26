@@ -21,13 +21,11 @@ async function createContact(token, data) {
     return await hubspotClient.crm.contacts.basicApi.create(SimplePublicObjectInputForCreate);
 }
 
-async function updateContact(token, data, commerceHubspotIdField) {
+async function updateContact(token, data, contactId) {
     const hubspotClient = new hubspot.Client({"accessToken": `${token}`})
     const properties = data
 
     const SimplePublicObjectInput = { properties }
-    const contactId = data[commerceHubspotIdField]
-
 
     return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }
@@ -38,8 +36,23 @@ async function getAllContacts(token, data) {
     return await hubspotClient.crm.contacts.getAll();
 }
 
+async function getContactAddressProperties(token, contactId) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+
+    const properties = [
+        "address",
+        "city",
+        "state",
+        "zip",
+        "country"
+    ];
+
+    return await hubspotClient.crm.contacts.basicApi.getById(contactId, properties);
+}
+
 module.exports = {
     createContact,
     getAllContacts,
-    updateContact
+    updateContact,
+    getContactAddressProperties
 }

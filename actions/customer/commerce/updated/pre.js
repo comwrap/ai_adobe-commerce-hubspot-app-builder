@@ -10,16 +10,59 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const {getCustomer} = require("../../commerce-customer-api-client");
+const {getContactAddressProperties} = require("../../hubspot-api-client");
+
 /**
  * This function hold any logic needed pre sending information to external backoffice application
  *
- * @param {object} data - Data received before transformation
+ * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
  */
-function preProcess (data, transformed) {
-  // @TODO Here implement any preprocessing needed
+async function preProcess(params, transformed) {
+    if (!params.data.id) {
+        return transformed;
+    }
+
+    const commerceCustomer = await getCustomer(
+        params.COMMERCE_BASE_URL,
+        params.COMMERCE_CONSUMER_KEY,
+        params.COMMERCE_CONSUMER_SECRET,
+        params.COMMERCE_ACCESS_TOKEN,
+        params.COMMERCE_ACCESS_TOKEN_SECRET,
+        params.data.id
+    );
+
+    const defaultBillingAddress = commerceCustomer.addresses.find(address => address.default_billing);
+    if (!defaultBillingAddress) {
+        return transformed;
+    }
+
+    const contactAddressMapped = {
+        address: defaultBillingAddress.street,
+        city: defaultBillingAddress.city,
+        state: defaultBillingAddress.region.region_code,
+        zip: defaultBillingAddress.postcode,
+        country: defaultBillingAddress.country_id
+    };
+
+    const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD];
+    const contactProperties = await getContactAddressProperties(params.HUBSPOT_ACCESS_TOKEN, contactId);
+    const currentContactAddress = {
+        address: contactProperties.properties.address,
+        city: contactProperties.properties.city,
+        state: contactProperties.properties.state,
+        zip: contactProperties.properties.zip,
+        country: contactProperties.properties.country
+    };
+
+    if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
+        return transformed;
+    }
+
+    return { ...transformed, ...contactAddressMapped };
 }
 
 module.exports = {
-  preProcess
+    preProcess
 }

@@ -22,8 +22,9 @@ const {Core} = require("@adobe/aio-sdk");
 async function sendData (params, data, preProcessed) {
   const logger = Core.Logger('customer-commerce-updated', {level: params.LOG_LEVEL || 'info'})
   try {
-      logger.debug('Contact Id to update ', data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD])
-      const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, data, params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD)
+      const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
+      logger.debug('Contact Id to update ', contactId)
+      const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId)
       logger.debug('Hubspot response: ', response)
       logger.debug('Contact id:', response.id)
 
