@@ -35,7 +35,6 @@ async function sendData(params, data, preProcessed) {
 
     } catch (e) {
         logger.error('There was an error creating Contact in HubSpot')
-        logger.error('Error ', e)
         e.message === 'HTTP request failed'
             ? logger.error(JSON.stringify(e.response, null, 2))
             : logger.error(e)

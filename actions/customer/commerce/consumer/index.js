@@ -41,7 +41,7 @@ async function main (params) {
       return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
     }
 
-    logger.info('Params type: ' + params.type)
+    logger.info('Params type: ', params.type)
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -55,8 +55,8 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD; //contact_id
-        logger.debug("ContactId field is: ", contactIdField)
+        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
+
         if (params.data.value.id && !params.data.value.hasOwnProperty(contactIdField)) {
           logger.info('Invoking created customer')
           const res = await openwhiskClient.invokeAction(
@@ -70,8 +70,8 @@ async function main (params) {
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         } else {
-          logger.info('Discarding created event without customer Id')
-          return actionSuccessResponse('Discarding created event without customer Id')
+          logger.info('Discarding customer saved event without customer Id')
+          return actionSuccessResponse('Discarding customer saved event without customer Id')
         }
         break
       }

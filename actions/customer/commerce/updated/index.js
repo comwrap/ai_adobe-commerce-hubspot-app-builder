@@ -48,7 +48,7 @@ async function main (params) {
     logger.debug(`Preprocess data result: ${JSON.stringify(preProcessed)}`)
 
     logger.debug(`Start sending data: ${JSON.stringify(params)}`)
-    const result = await sendData(params, transformedData, preProcessed)
+    const result = await sendData(params, preProcessed)
     if (!result.success) {
       logger.error(`Send data failed: ${result.message}`)
       return actionErrorResponse(result.statusCode, result.message)

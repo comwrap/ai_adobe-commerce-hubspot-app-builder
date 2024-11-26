@@ -40,7 +40,6 @@ async function preProcess(params, transformed) {
         return transformed;
     }
 
-    logger.debug('Default billing address: ', defaultBillingAddress);
     const contactAddressMapped = {
         address: defaultBillingAddress.street[0],
         city: defaultBillingAddress.city,
@@ -49,9 +48,9 @@ async function preProcess(params, transformed) {
         country: defaultBillingAddress.country_id
     };
 
-    logger.debug('Contact address mapped: ', contactAddressMapped);
     const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD];
-    logger.debug('Contact Id to update in preProcess ', contactId);
+    logger.debug('ContactId to update in preProcess ', contactId);
+
     const contactProperties = await getContactAddressProperties(params.HUBSPOT_ACCESS_TOKEN, contactId);
     const currentContactAddress = {
         address: contactProperties.properties.address,
@@ -61,13 +60,11 @@ async function preProcess(params, transformed) {
         country: contactProperties.properties.country
     };
 
-    logger.debug('Current contact address in HubSpot: ', currentContactAddress);
-
     if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
         return transformed;
     }
 
-    logger.debug('Updating address as they are different')
+    logger.debug('Updating customer address in HubSpot')
     return { ...transformed, ...contactAddressMapped };
 }
 
