@@ -16,13 +16,14 @@ governing permissions and limitations under the License.
  * @param {object} data - Data received from Adobe commerce
  * @returns {object} - Returns transformed data object
  */
-function transformData (data) {
-  // @TODO Here transform the data as needed for 3rd party API
-  const transformedData = data
-
-  return transformedData
+function transformData(data) {
+  return {
+    email: `${data.email}`,
+    firstname: `${data.firstname}`,
+    lastname: `${data.lastname}`,
+  };
 }
 
 module.exports = {
-  transformData
-}
+  transformData,
+};
