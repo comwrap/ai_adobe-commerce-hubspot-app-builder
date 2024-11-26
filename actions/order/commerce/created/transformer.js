@@ -10,27 +10,16 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const {Core} = require("@adobe/aio-sdk");
-const {stringParameters} = require("../../../utils");
-
 /**
- * This function transform the received order data from Adobe commerce to external back-office application
+ * This function transforms the received order data from Adobe commerce to external back-office application.
  *
- * @param {object} data - Data received from Adobe commerce
- * @returns {object} - Returns transformed data object
+ * @param {object} data - Data received from Adobe commerce.
+ * @returns {object} - Returns transformed data object.
  */
-function transformData (data) {
-  const logger = Core.Logger('order-commerce-transformer-created', { level: 'debug' || 'info' })
-  let shippingAddress = 0;
-  // @TODO Here transform the data as needed for 3rd party API
-  for (const address of data.addresses ) {
-    if (address.entity_id === data.shipping_address_id) {
-      shippingAddress = address;
-      break
-    }
-  }
+function transformData(data) {
+  const shippingAddress = getShippingAddress(data);
 
-  const transformedData = {
+  return {
     properties: {
       hs_external_order_id: data.entity_id,
       hs_order_name: data.increment_id,
@@ -47,17 +36,29 @@ function transformData (data) {
       hs_tax: data.tax_amount,
       hs_shipping_cost: data.shipping_amount,
       hs_order_discount: data.discount_amount,
-      // hs_external_created_date: data.created_at,
       hs_billing_address_email: data.customer_email,
       hs_billing_address_firstname: data.customer_firstname,
       hs_billing_address_lastname: data.customer_lastname,
       hs_payment_processing_method: data.payment.method
     }
-  }
+  };
+}
 
-  return transformedData
+/**
+ * Retrieves the shipping address from the order data.
+ *
+ * @param {object} data - Data received from Adobe commerce.
+ * @returns {object} - Shipping address object.
+ */
+function getShippingAddress(data) {
+  for (const address of data.addresses) {
+    if (address.entity_id === data.shipping_address_id) {
+      return address;
+    }
+  }
+  return {};
 }
 
 module.exports = {
   transformData
-}
+};

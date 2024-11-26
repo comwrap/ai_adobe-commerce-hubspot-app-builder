@@ -21,6 +21,18 @@
           "lastname": "111111",
           "email": "0000001@aaa.com"
         }]
+      },
+      "be-observer.customer_update": {
+        "sampleEventTemplate": [{
+          "id": "1",
+          "lastname": "lastname",
+          "firstname": "firstname",
+          "email": "0000001@aaa.com",
+          "city": "Lviv",
+          "country": "Ukraine",
+          "zip": "49000",
+          "address": "Vul. Heroiv UPA"
+        }]
       }
     }
   },
