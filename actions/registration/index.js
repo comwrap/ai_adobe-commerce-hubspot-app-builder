@@ -18,8 +18,8 @@ async function main() {
                 order: {
                     gridColumns: {
                         data: {
-                            meshId: '',
-                            apiKey: ''
+                            meshId: 'd56981ce-5337-446c-87b1-4f6c745f52c5',
+                            apiKey: '2c75b61b729b44ada6f67356a9b04917'
                         },
                         properties:[
                             {

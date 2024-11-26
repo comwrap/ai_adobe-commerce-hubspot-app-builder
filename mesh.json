@@ -1,0 +1,23 @@
+{
+    "meshConfig": {
+      "sources": [
+        {
+          "name": "data",
+          "handler": {
+            "JsonSchema": {
+              "baseUrl": "https://270038-413siennadonkey-stage.adobeioruntime.net/api/v1/web/order-custom-grid-columns",
+              "operations": [
+                {
+                  "type": "Query",
+                  "field": "orders",
+                  "path": "/get-order-grid-columns",
+                  "method": "GET",
+                  "responseSchema": "./schema_orders.json"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
