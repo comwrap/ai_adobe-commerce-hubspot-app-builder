@@ -17,6 +17,7 @@ const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../con
 const Openwhisk = require('../../../openwhisk')
 const stateLib = require('@adobe/aio-lib-state')
 const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
+const { getCompanyByExternalId } = require('../../hubspot-api-client')
 
 /**
  * This is the consumer of the events coming from Adobe Commerce related to customer entity.
@@ -92,6 +93,24 @@ async function main (params) {
         }
         break
       }
+      case "com.adobe.commerce.observer.company_save_commit_after":
+        //check in hubspot if the company already exist
+        const company = await getCompanyByExternalId(params.data.id);
+        logger.info('get Company:' + JSON.stringify(company));
+        if (company.length > 0) {
+          logger.info('Invoking created company')
+          const res = await openwhiskClient.invokeAction(
+              'customer-commerce/company-created', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
+        } else {
+          logger.info('Invoking update company')
+          const res = await openwhiskClient.invokeAction(
+              'customer-commerce/company-updated', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
+        }
+        break;
       default:
         logger.error(`Event type not found: ${params.type}`)
         return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)

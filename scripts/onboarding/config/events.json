@@ -12,6 +12,17 @@
             "updated_at": "2024-08-05 10:03:49"
           }
         }
+      },
+      "com.adobe.commerce.observer.company_save_commit_after": {
+        "sampleEventTemplate": {
+          "value": {
+            "id": "int",
+            "status": "int",
+            "company_name": "string",
+            "legal_name": "string",
+            "company_email": "string"
+          }
+        }
       }
     },
     "backoffice": {
