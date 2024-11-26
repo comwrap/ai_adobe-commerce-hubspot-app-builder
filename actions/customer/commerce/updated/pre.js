@@ -42,13 +42,14 @@ async function preProcess(params, transformed) {
 
     logger.debug('Default billing address: ', defaultBillingAddress);
     const contactAddressMapped = {
-        address: defaultBillingAddress.street,
+        address: defaultBillingAddress.street[0],
         city: defaultBillingAddress.city,
         state: defaultBillingAddress.region.region_code,
         zip: defaultBillingAddress.postcode,
         country: defaultBillingAddress.country_id
     };
 
+    logger.debug('Contact address mapped: ', contactAddressMapped);
     const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD];
     logger.debug('Contact Id to update in preProcess ', contactId);
     const contactProperties = await getContactAddressProperties(params.HUBSPOT_ACCESS_TOKEN, contactId);
@@ -66,6 +67,7 @@ async function preProcess(params, transformed) {
         return transformed;
     }
 
+    logger.debug('Updating address as they are different')
     return { ...transformed, ...contactAddressMapped };
 }
 
