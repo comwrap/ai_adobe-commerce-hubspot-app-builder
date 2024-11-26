@@ -109,6 +109,35 @@ async function deleteCustomer (baseUrl, consumerKey, consumerSecret, accessToken
  * @param {string} consumerSecret - Adobe commerce integration consumer secret
  * @param {string} accessToken - Adobe commerce integration access token
  * @param {string} accessTokenSecret - Adobe commerce integration access token secret
+ * @param {object} customerId - Adobe commerce customer ID
+ */
+async function getCustomer (baseUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, customerId) {
+    const client = getCommerceOauthClient(
+        {
+            url: baseUrl,
+            consumerKey,
+            consumerSecret,
+            accessToken,
+            accessTokenSecret
+        },
+        logger
+    )
+
+    return await client.get(
+        `customers/${customerId}`,
+        ''
+    )
+}
+
+/**
+ * This function calls Adobe commerce rest API to get a customer
+ *
+ * @returns {object} - API response object
+ * @param {string} baseUrl - Adobe commerce rest api base url
+ * @param {string} consumerKey - Adobe commerce integration consumer key
+ * @param {string} consumerSecret - Adobe commerce integration consumer secret
+ * @param {string} accessToken - Adobe commerce integration access token
+ * @param {string} accessTokenSecret - Adobe commerce integration access token secret
  * @param {string} searchCriteria - Adobe commerce search criteria
  */
 async function getCustomerBySearchCriteria (
@@ -129,6 +158,7 @@ async function getCustomerBySearchCriteria (
         logger
     )
 
+    logger.info(`searchCriteria: ${searchCriteria}`)
     return await client.get(
         `customers/search?${searchCriteria}`,
         ''
@@ -139,5 +169,6 @@ module.exports = {
   createCustomer,
   updateCustomer,
   deleteCustomer,
+  getCustomer,
   getCustomerBySearchCriteria
 }

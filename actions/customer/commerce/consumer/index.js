@@ -55,14 +55,14 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
-        if (params.data.value.id && !params.data.value.contact_id) {
+        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD; //contact_id
+        if (params.data.value.id && !params.data.value.hasOwnProperty(contactIdField)) {
           logger.info('Invoking created customer')
           const res = await openwhiskClient.invokeAction(
               'customer-commerce/created', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
-        } else if (params.data.value.id && params.data.value.contact_id) {
+        } else if (params.data.value.id && params.data.value.hasOwnProperty(contactIdField)) {
           logger.info('Invoking update customer')
           const res = await openwhiskClient.invokeAction(
             'customer-commerce/updated', params.data.value)

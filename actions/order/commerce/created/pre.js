@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 const fetch = require("node-fetch");
 const {Core} = require("@adobe/aio-sdk");
 const {stringParameters} = require("../../../utils");
-const { getCommerceCustomerIdByAttribute } = require('../../../customer/search-customer-by-attribute-id')
+const { getCustomer } = require('../../../customer/commerce-customer-api-client')
 
 /**
  * This function holds any logic needed pre sending information to external backoffice application
@@ -27,18 +27,33 @@ async function preProcess(params, transformed) {
   let associations = []
 
   if (params.data.customer_id) {
-    const commerceCustomerId = await getCommerceCustomerIdByAttribute(params, 'contact_id', params.data.customer_id)
-    associations.push({
-      to: {
-        id: commerceCustomerId,
-      },
-      types: [
-        {
-          associationCategory: "HUBSPOT_DEFINED",
-          associationTypeId: 507, // Contact to Order
-        },
-      ],
+    const commerceCustomer = await getCustomer(
+        params.COMMERCE_BASE_URL,
+        params.COMMERCE_CONSUMER_KEY,
+        params.COMMERCE_CONSUMER_SECRET,
+        params.COMMERCE_ACCESS_TOKEN,
+        params.COMMERCE_ACCESS_TOKEN_SECRET,
+        params.data.customer_id
+    )
+    let contactId = null;
+    commerceCustomer.custom_attributes.forEach((attribute) => {
+      if (attribute.attribute_code === params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD) {
+        contactId = attribute.value;
+      }
     });
+    if (contactId) {
+      associations.push({
+        to: {
+          id: contactId,
+        },
+        types: [
+          {
+            associationCategory: "HUBSPOT_DEFINED",
+            associationTypeId: 507, // Contact to Order
+          },
+        ],
+      });
+    }
   }
 
   for (let i = 0; i < params.data.items.length; i++) {
