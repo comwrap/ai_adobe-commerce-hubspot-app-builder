@@ -10,6 +10,6 @@
     "zip": {"type":  "string"},
     "state": {"type":  "string"}
   },
-  "required": ["id", "firstname", "lastname", "email", "address", "city", "zip", "state"],
+  "required": ["id", "firstname", "lastname", "email", "address", "city", "zip"],
   "additionalProperties": true
 }
