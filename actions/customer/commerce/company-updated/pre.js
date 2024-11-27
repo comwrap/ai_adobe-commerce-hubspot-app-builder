@@ -16,10 +16,10 @@ governing permissions and limitations under the License.
  * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
  */
-async function preProcess(params, transformed) {
+async function preProcess (params, transformed) {
 
 }
 
 module.exports = {
-    preProcess
+  preProcess
 }

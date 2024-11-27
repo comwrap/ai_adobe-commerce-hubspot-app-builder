@@ -10,30 +10,33 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-async function main() {
-    return {
-        statusCode: 200,
-        body: {
-            registration: {
-                order: {
-                    gridColumns: {
-                        data: {
-                            meshId: 'd56981ce-5337-446c-87b1-4f6c745f52c5',
-                            apiKey: '2c75b61b729b44ada6f67356a9b04917'
-                        },
-                        properties:[
-                            {
-                                label: 'Export Status',
-                                columnId: 'hubspot_export_status',
-                                type: 'string',
-                                align: 'center'
-                            }
-                        ]
-                    }
-                }
-            }
+/**
+ *
+ */
+async function main () {
+  return {
+    statusCode: 200,
+    body: {
+      registration: {
+        order: {
+          gridColumns: {
+            data: {
+              meshId: 'd56981ce-5337-446c-87b1-4f6c745f52c5',
+              apiKey: '2c75b61b729b44ada6f67356a9b04917'
+            },
+            properties: [
+              {
+                label: 'Export Status',
+                columnId: 'hubspot_export_status',
+                type: 'string',
+                align: 'center'
+              }
+            ]
+          }
         }
+      }
     }
+  }
 }
 
 exports.main = main

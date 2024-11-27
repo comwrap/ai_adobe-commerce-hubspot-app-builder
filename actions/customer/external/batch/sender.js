@@ -19,7 +19,7 @@ const { HTTP_INTERNAL_ERROR } = require('../../../constants')
  * @returns {object} - returns the result data of sending information to Adobe commerce
  * @param {object} params - include the env params
  */
-async function sendData (params, ) {
+async function sendData (params) {
   try {
     const response = await importCustomerBatch(
       params.COMMERCE_BASE_URL,
@@ -41,7 +41,6 @@ async function sendData (params, ) {
       success: true,
       message: response
     }
-
   } catch (error) {
     return {
       success: false,

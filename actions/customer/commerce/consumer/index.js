@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 
 const { Core } = require('@adobe/aio-sdk')
 const { stringParameters, checkMissingRequestInputs } = require('../../../utils')
-const { errorResponse, successResponse, actionSuccessResponse} = require('../../../responses')
+const { errorResponse, successResponse, actionSuccessResponse } = require('../../../responses')
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
 const stateLib = require('@adobe/aio-lib-state')
-const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
+const { isAPotentialInfiniteLoop, storeFingerPrint } = require('../../../infiniteLoopCircuitBreaker')
 const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
 
 /**
@@ -74,47 +74,47 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
+        const contactIdField = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
 
-        const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === "";
+        const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === ''
 
         if (params.data.value.id) {
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
-            logger.info('Invoking created customer');
-            const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value);
-            response = res?.response?.result?.body;
-            statusCode = res?.response?.result?.statusCode;
+            logger.info('Invoking created customer')
+            const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
+            response = res?.response?.result?.body
+            statusCode = res?.response?.result?.statusCode
           } else {
-            logger.info('Invoking update customer');
-            const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value);
-            response = res?.response?.result?.body;
-            statusCode = res?.response?.result?.statusCode;
+            logger.info('Invoking update customer')
+            const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
+            response = res?.response?.result?.body
+            statusCode = res?.response?.result?.statusCode
           }
         } else {
-          logger.info('Discarding customer saved event without customer Id');
-          return actionSuccessResponse('Discarding customer saved event without customer Id');
+          logger.info('Discarding customer saved event without customer Id')
+          return actionSuccessResponse('Discarding customer saved event without customer Id')
         }
         break
       }
-      case "com.adobe.commerce.observer.company_save_commit_after":
-        //check in hubspot if the company already exist
-        const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id);
-        logger.info('companyHubspotId:' + companyHubspotId);
-        params.data.value.hubspotId = companyHubspotId;
+      case 'com.adobe.commerce.observer.company_save_commit_after':
+        // check in hubspot if the company already exist
+        const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id)
+        logger.info('companyHubspotId:' + companyHubspotId)
+        params.data.value.hubspotId = companyHubspotId
         if (companyHubspotId == null) {
           logger.info('Invoking created company')
           const res = await openwhiskClient.invokeAction(
-              'customer-commerce/company-created', params.data.value)
+            'customer-commerce/company-created', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         } else {
           logger.info('Invoking update company')
           const res = await openwhiskClient.invokeAction(
-              'customer-commerce/company-updated', params.data.value)
+            'customer-commerce/company-updated', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         }
-        break;
+        break
       default:
         logger.error(`Event type not found: ${params.type}`)
         return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)
