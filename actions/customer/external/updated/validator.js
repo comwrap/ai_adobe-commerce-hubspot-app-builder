@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const Ajv = require('ajv')
-const {Core} = require("@adobe/aio-sdk");
+const { Core } = require('@adobe/aio-sdk')
 
 /**
  * This function validate the customer data received from external back-office application

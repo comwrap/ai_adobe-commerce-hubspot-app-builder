@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 const { updateCustomer } = require('../../commerce-customer-api-client')
 const { HTTP_INTERNAL_ERROR } = require('../../../constants')
-const {Core} = require("@adobe/aio-sdk");
+const { Core } = require('@adobe/aio-sdk')
 
 /**
  * This function send the customer updated data to the Adobe commerce REST API

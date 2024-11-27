@@ -40,7 +40,7 @@ async function main (params) {
     logger.info('Start processing request')
     logger.debug(`Consumer main params: ${stringParameters(params)}`)
 
-    const requiredParams = ['type','COMMERCE_HUBSPOT_CONTACT_ID_FIELD']
+    const requiredParams = ['type', 'COMMERCE_HUBSPOT_CONTACT_ID_FIELD']
     const errorMessage = checkMissingRequestInputs(params, requiredParams, [])
 
     if (errorMessage) {
@@ -67,7 +67,6 @@ async function main (params) {
       }
     }
 
-
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
         const requiredParams = [
@@ -90,8 +89,7 @@ async function main (params) {
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
             logger.info('Invoking created customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
-            logger.info('Code returned: '+res?.response?.result?.code)
-            if (res?.response?.result?.code===409) {
+            if (res?.response?.result?.code === 409) {
               const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
               response = res?.response?.result?.body
               statusCode = res?.response?.result?.statusCode
