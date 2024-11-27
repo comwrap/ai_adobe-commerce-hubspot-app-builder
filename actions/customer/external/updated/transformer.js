@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
-const {Core} = require("@adobe/aio-sdk");
+const { Core } = require('@adobe/aio-sdk')
 
 /**
  * This function transform the received customer data from external back-office application to Adobe commerce
@@ -24,9 +24,9 @@ function transformData (params, customer) {
 
   const defaultBilling = customer.addresses?.find(address => address.default_billing)
   const addressId = defaultBilling?.id ? defaultBilling.id : 0
-  //TODO: If adding a new address firstname, lastname and telephone and country_id are required
-  //TODO add telephone as a field of the backoffice customer update event to be included in here
-  const telephoneNumber = "1234567890"
+  // TODO: If adding a new address firstname, lastname and telephone and country_id are required
+  // TODO add telephone as a field of the backoffice customer update event to be included in here
+  const telephoneNumber = '1234567890'
 
   logger.debug('Address ID: ', addressId)
   return {

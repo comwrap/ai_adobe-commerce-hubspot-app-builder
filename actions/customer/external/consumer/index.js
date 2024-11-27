@@ -59,7 +59,7 @@ async function main (params) {
     if (state && infiniteLoopEventTypes.includes(params.type)) {
       const emailWithoutAt = params.data.email.replace(/@/g, '')
       infiniteLoopKey = `customer_${emailWithoutAt}`
-      fingerPrintData = {email: params.data.email}
+      fingerPrintData = { email: params.data.email }
 
       if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
         logger.info(`Infinite loop break for customer ${params.data.email}`)

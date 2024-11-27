@@ -10,7 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 const { getCustomerBySearchCriteria } = require('../../commerce-customer-api-client')
-const {Core} = require("@adobe/aio-sdk");
+const { Core } = require('@adobe/aio-sdk')
 
 /**
  * This function hold any logic needed pre sending information to Adobe commerce
