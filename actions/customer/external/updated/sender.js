@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 const { updateCustomer } = require('../../commerce-customer-api-client')
 const { HTTP_INTERNAL_ERROR } = require('../../../constants')
+const {Core} = require("@adobe/aio-sdk");
 
 /**
  * This function send the customer updated data to the Adobe commerce REST API
@@ -22,15 +23,25 @@ const { HTTP_INTERNAL_ERROR } = require('../../../constants')
  * @param {object} preProcessed - preprocessed result data
  */
 async function sendData (params, transformed, preProcessed) {
+  const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
+
   try {
-    return await updateCustomer(
+    logger.info('Start sending customer updated data to commerce', transformed)
+    const response = await updateCustomer(
       params.COMMERCE_BASE_URL,
       params.COMMERCE_CONSUMER_KEY,
       params.COMMERCE_CONSUMER_SECRET,
       params.COMMERCE_ACCESS_TOKEN,
       params.COMMERCE_ACCESS_TOKEN_SECRET,
       transformed)
+
+    logger.info('Customer updated on commerce response: ', response)
+    return {
+      success: true,
+      message: response
+    }
   } catch (error) {
+    logger.error('Error updating customer on commerce', JSON.stringify(error))
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,

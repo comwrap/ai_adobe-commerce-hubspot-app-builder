@@ -22,22 +22,22 @@ function transformData (params, customer) {
   return {
     customer: {
       id: customer.id,
-      firstname: params.data.name,
+      firstname: params.data.firstname,
       lastname: params.data.lastname,
       email: params.data.email,
-      address: [{
+      addresses: [{
         id: defaultBilling.id,
         street: [params.data.address],
         city: params.data.city,
-        // ToDo: figure out how to get region ID by the code
+        // ToDo: figure out how to get region ID by the code, county_id and region_id depend on each other
         // region_id: params.data.state ,
-        zip: params.data.zip,
-        country: params.data.country
+        //country_id: params.data.country,
+        postcode: params.data.zip,
       }],
       custom_attributes: [
         {
           attribute_code: params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD,
-          value: params.data.id
+          value: `${params.data.id}`
         }
       ]
     }
