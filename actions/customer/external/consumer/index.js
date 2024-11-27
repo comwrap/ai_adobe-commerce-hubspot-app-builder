@@ -54,12 +54,17 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'be-observer.customer_update'
     ]
-    const emailWithoutAt = params.data.email.replace(/@/g, '')
-    const infiniteLoopKey = `customer_${emailWithoutAt}`
-    const fingerPrintData = { email: params.data.email }
-    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
-      logger.info(`Infinite loop break for customer ${params.data.email}`)
-      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    let infiniteLoopKey = ''
+    let fingerPrintData = {}
+    if (state && infiniteLoopEventTypes.includes(params.type)) {
+      const emailWithoutAt = params.data.email.replace(/@/g, '')
+      infiniteLoopKey = `customer_${emailWithoutAt}`
+      fingerPrintData = {email: params.data.email}
+
+      if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+        logger.info(`Infinite loop break for customer ${params.data.email}`)
+        return successResponse(params.type, 'event discarded to prevent infinite loop')
+      }
     }
 
     switch (params.type) {
@@ -89,7 +94,9 @@ async function main (params) {
     }
 
     // Prepare to detect infinite loop on subsequent events
-    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    if (state && infiniteLoopEventTypes.includes(params.type)) {
+      await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    }
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)
