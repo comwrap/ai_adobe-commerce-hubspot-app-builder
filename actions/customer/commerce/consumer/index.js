@@ -54,13 +54,16 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'com.adobe.commerce.observer.customer_save_commit_after'
     ]
-    const emailWithoutAt = params.data.value.email.replace(/@/g, '')
-    const infiniteLoopKey = `customer_${emailWithoutAt}`
-    const fingerPrintData = { email: params.data.value.email }
-    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
-      logger.info(`Infinite loop break for customer ${params.data.email}`)
-      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    if (infiniteLoopEventTypes.includes(params.type)) {
+      const emailWithoutAt = params.data.value.email.replace(/[@+]/g, '')
+      const infiniteLoopKey = `customer_${emailWithoutAt}`
+      const fingerPrintData = { email: params.data.value.email }
+      if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+        logger.info(`Infinite loop break for customer ${params.data.email}`)
+        return successResponse(params.type, 'event discarded to prevent infinite loop')
+      }
     }
+
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -129,7 +132,9 @@ async function main (params) {
     }
 
     // Prepare to detect infinite loop on subsequent events
-    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    if (infiniteLoopEventTypes.includes(params.type)) {
+      await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    }
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)
