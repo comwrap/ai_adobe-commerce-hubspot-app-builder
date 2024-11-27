@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {"type": "number"},
-    "name": { "type": "string" },
+    "firstname": { "type": "string" },
     "lastname": {"type": "string"},
     "email": {"type":  "string"}
   },
