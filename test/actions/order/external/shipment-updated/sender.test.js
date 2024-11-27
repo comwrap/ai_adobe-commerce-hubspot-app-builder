@@ -12,7 +12,7 @@ governing permissions and limitations under the License.
 
 jest.mock('../../../../../actions/order/commerce-shipment-api-client')
 const { updateShipment } = require('../../../../../actions/order/commerce-shipment-api-client')
-
+// eslint-disable-next-line node/no-missing-require
 const sender = require('../../../../../actions/order/external/shipment-updated/sender')
 
 describe('Given order external shipment updated sender', () => {

@@ -16,17 +16,17 @@ governing permissions and limitations under the License.
  * @param {object} params - Data received from Adobe commerce
  * @returns {object} - Returns transformed data object
  */
-function transformData(params) {
-    return {
-        tracks: [
-            {
-                track_number: params.data.trackingNumber,
-                carrier_code: "custom"
-            }
-        ]
-    }
+function transformData (params) {
+  return {
+    tracks: [
+      {
+        track_number: params.data.trackingNumber,
+        carrier_code: 'custom'
+      }
+    ]
+  }
 }
 
 module.exports = {
-    transformData
+  transformData
 }

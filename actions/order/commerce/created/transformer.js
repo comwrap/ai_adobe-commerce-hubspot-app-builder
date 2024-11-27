@@ -16,8 +16,8 @@ governing permissions and limitations under the License.
  * @param {object} data - Data received from Adobe commerce.
  * @returns {object} - Returns transformed data object.
  */
-function transformData(data) {
-  const shippingAddress = getShippingAddress(data);
+function transformData (data) {
+  const shippingAddress = getShippingAddress(data)
 
   return {
     properties: {
@@ -25,7 +25,7 @@ function transformData(data) {
       hs_order_name: data.increment_id,
       hs_currency_code: data.order_currency_code,
       hs_source_store: data.store_name,
-      hs_fulfillment_status: "New",
+      hs_fulfillment_status: 'New',
       hs_shipping_address_city: shippingAddress.city,
       hs_shipping_address_state: shippingAddress.region,
       hs_shipping_address_street: shippingAddress.street,
@@ -41,7 +41,7 @@ function transformData(data) {
       hs_billing_address_lastname: data.customer_lastname,
       hs_payment_processing_method: data.payment.method
     }
-  };
+  }
 }
 
 /**
@@ -50,15 +50,15 @@ function transformData(data) {
  * @param {object} data - Data received from Adobe commerce.
  * @returns {object} - Shipping address object.
  */
-function getShippingAddress(data) {
+function getShippingAddress (data) {
   for (const address of data.addresses) {
     if (address.entity_id === data.shipping_address_id) {
-      return address;
+      return address
     }
   }
-  return {};
+  return {}
 }
 
 module.exports = {
   transformData
-};
+}

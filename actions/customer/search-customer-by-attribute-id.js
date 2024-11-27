@@ -1,5 +1,4 @@
 const { getCustomerBySearchCriteria } = require('./commerce-customer-api-client')
-const {Core} = require("@adobe/aio-sdk");
 
 /**
  * Get customer attribute from commerce
@@ -10,19 +9,19 @@ const {Core} = require("@adobe/aio-sdk");
  * @returns {Promise<string>} - Returns the SAP customer number
  */
 async function getCommerceCustomerIdByAttribute (params, attributeCode, attributeValue) {
-    const fetchedCustomer  = await getCustomerBySearchCriteria(
-        params.COMMERCE_BASE_URL,
-        params.COMMERCE_CONSUMER_KEY,
-        params.COMMERCE_CONSUMER_SECRET,
-        params.COMMERCE_ACCESS_TOKEN,
-        params.COMMERCE_ACCESS_TOKEN_SECRET,
-        getSearchQueryString(attributeCode, attributeValue)
-    );
-    if (!fetchedCustomer || fetchedCustomer.items.length === 0) {
-        return null;
-    }
+  const fetchedCustomer = await getCustomerBySearchCriteria(
+    params.COMMERCE_BASE_URL,
+    params.COMMERCE_CONSUMER_KEY,
+    params.COMMERCE_CONSUMER_SECRET,
+    params.COMMERCE_ACCESS_TOKEN,
+    params.COMMERCE_ACCESS_TOKEN_SECRET,
+    getSearchQueryString(attributeCode, attributeValue)
+  )
+  if (!fetchedCustomer || fetchedCustomer.items.length === 0) {
+    return null
+  }
 
-    return fetchedCustomer.items[0].id;
+  return fetchedCustomer.items[0].id
 }
 
 /**
@@ -33,11 +32,11 @@ async function getCommerceCustomerIdByAttribute (params, attributeCode, attribut
  * @returns {string} - Returns the search query string
  */
 function getSearchQueryString (attributeCode, attributeValue) {
-    return `searchCriteria[filter_groups][0][filters][0][field]=${attributeCode}` +
+  return `searchCriteria[filter_groups][0][filters][0][field]=${attributeCode}` +
         `&searchCriteria[filter_groups][0][filters][0][value]=${attributeValue}` +
         '&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
 }
 
 module.exports = {
-    getCommerceCustomerIdByAttribute
+  getCommerceCustomerIdByAttribute
 }

@@ -11,13 +11,15 @@ governing permissions and limitations under the License.
 */
 
 jest.mock('../../../../../actions/order/external/shipment-updated/validator')
+// eslint-disable-next-line node/no-missing-require
 const { validateData } = require('../../../../../actions/order/external/shipment-updated/validator')
-
+// eslint-disable-next-line node/no-missing-require
 jest.mock('../../../../../actions/order/external/shipment-updated/transformer')
-
+// eslint-disable-next-line node/no-missing-require
 jest.mock('../../../../../actions/order/external/shipment-updated/sender')
+// eslint-disable-next-line node/no-missing-require
 const { sendData } = require('../../../../../actions/order/external/shipment-updated/sender')
-
+// eslint-disable-next-line node/no-missing-require
 const action = require('../../../../../actions/order/external/shipment-updated')
 const { HTTP_BAD_REQUEST, HTTP_INTERNAL_ERROR, HTTP_OK } = require('../../../../../actions/constants')
 

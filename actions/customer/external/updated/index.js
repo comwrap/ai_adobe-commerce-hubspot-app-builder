@@ -40,11 +40,11 @@ async function main (params) {
       return actionErrorResponse(HTTP_BAD_REQUEST, validation.message)
     }
 
-    logger.debug(`Transform data: ${stringParameters(params)}`)
-    const transformed = transformData(params)
-
     logger.debug(`Preprocess data: ${stringParameters(params)}`)
-    const preProcessed = preProcess(params, transformed)
+    const preProcessed = await preProcess(params)
+
+    logger.debug(`Transform data: ${stringParameters(params)}`)
+    const transformed = transformData(params, preProcessed)
 
     logger.debug(`Start sending data: ${JSON.stringify(transformed)}`)
     const result = await sendData(params, transformed, preProcessed)
