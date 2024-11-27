@@ -68,10 +68,6 @@ async function preProcess (params, transformed) {
   if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
     return transformed
   }
-  if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id !== 0) {
-    const companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
-    return { ...transformed, ...contactAddressMapped, hubspot_company_id: companyId }
-  }
 
   logger.debug('Updating customer address in HubSpot')
   return { ...transformed, ...contactAddressMapped }

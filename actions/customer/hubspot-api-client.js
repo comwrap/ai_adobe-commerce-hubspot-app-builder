@@ -32,21 +32,23 @@ async function createContact (token, data, preProcess = {}) {
  * @param {string} token token
  * @param {object} data data
  * @param {string} contactId contact
- * @param {object} preProcess preProcess
+ * @param {object} companyId companyId
  * @returns {Promise} promise
  */
-async function updateContact (token, data, contactId) {
+async function updateContact (token, data, contactId, companyId = null) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
   const logger = Core.Logger('hubspot-api-client', { level: 'info' })
   const properties = data
-  const associations = []
-  if (preProcess.hasOwnProperty('hubspot_company_id') && preProcess.hubspot_company_id !== null) {
-    associations.push({
-      to: { id: preProcess.hubspot_company_id, properties },
-      types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }]
-    })
-  }
+
   const SimplePublicObjectInput = { properties }
+
+  if (companyId !== null) {
+    const BatchInputPublicDefaultAssociationMultiPost = { inputs: [{"_from":{"id":contactId},"to":{"id":companyId}}] };
+    const fromObjectType = "contact";
+    const toObjectType = "company";
+    const apiResponse = await hubspotClient.crm.associations.v4.batchApi.createDefault(fromObjectType, toObjectType, BatchInputPublicDefaultAssociationMultiPost);
+    logger.info('api respones associate default:' , JSON.stringify(apiResponse))
+  }
 
   return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }

@@ -24,7 +24,7 @@ async function sendData (params, preProcessed) {
     const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
     let companyId = null
     logger.debug('Contact Id to update ', contactId)
-    if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id!==0) {
+    if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id !== 0) {
       companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
     }
     const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId, companyId)
