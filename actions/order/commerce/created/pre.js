@@ -20,6 +20,7 @@ const logger = Core.Logger('order-custom-grid-columns', { level: 'error' })
  *
  * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
+ * @returns {Array} items
  */
 async function preProcess (params, transformed) {
   await updateOrderStatus(params.data.increment_id, orderStatus.IN_PROGRESS)
@@ -32,7 +33,8 @@ async function preProcess (params, transformed) {
 
 /**
  *
- * @param params
+ * @param {object} params incoming params
+ * @returns {Array} associations list
  */
 async function getCustomerAssociations (params) {
   const associations = []
@@ -64,7 +66,8 @@ async function getCustomerAssociations (params) {
 
 /**
  *
- * @param params
+ * @param {object} params incoming params
+ * @returns {Array} associations list
  */
 async function getItemAssociations (params) {
   const associations = []

@@ -1,11 +1,11 @@
 extensions:
   commerce/backend-ui/1:
-    actions: actions
-    web: web-src
     operations:
       view:
         - type: web
           impl: index.html
+    actions: actions
+    web: web-src
     runtimeManifest:
       packages:
         starter-kit:

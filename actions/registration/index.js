@@ -12,6 +12,7 @@ governing permissions and limitations under the License.
 
 /**
  *
+ * @returns {object} return info
  */
 async function main () {
   return {

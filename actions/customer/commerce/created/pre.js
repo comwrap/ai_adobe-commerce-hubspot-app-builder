@@ -16,10 +16,11 @@ const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
  *
  * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
+ * @returns {void} no implementation curently
  */
 async function preProcess (params, transformed) {
   // @TODO Here implement any preprocessing needed
-  if (params.data.hasOwnProperty('company_attributes')) {
+  if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id!==0) {
     const companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
     return {
       hubspot_company_id: companyId

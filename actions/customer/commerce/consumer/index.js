@@ -54,13 +54,16 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'com.adobe.commerce.observer.customer_save_commit_after'
     ]
-    const emailWithoutAt = params.data.value.email.replace(/@/g, '')
-    const infiniteLoopKey = `customer_${emailWithoutAt}`
-    const fingerPrintData = { email: params.data.value.email }
-    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
-      logger.info(`Infinite loop break for customer ${params.data.email}`)
-      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    if (infiniteLoopEventTypes.includes(params.type)) {
+      const emailWithoutAt = params.data.value.email.replace(/[@+]/g, '')
+      const infiniteLoopKey = `customer_${emailWithoutAt}`
+      const fingerPrintData = { email: params.data.value.email }
+      if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+        logger.info(`Infinite loop break for customer ${params.data.email}`)
+        return successResponse(params.type, 'event discarded to prevent infinite loop')
+      }
     }
+
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -76,9 +79,11 @@ async function main (params) {
 
         const contactIdField = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
 
+        // eslint-disable-next-line
         const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === ''
 
         if (params.data.value.id) {
+          // eslint-disable-next-line
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
             logger.info('Invoking created customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
@@ -98,6 +103,7 @@ async function main (params) {
       }
       case 'com.adobe.commerce.observer.company_save_commit_after':
         // check in hubspot if the company already exist
+        // eslint-disable-next-line
         const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id)
         logger.info('companyHubspotId:' + companyHubspotId)
         params.data.value.hubspotId = companyHubspotId
@@ -126,7 +132,9 @@ async function main (params) {
     }
 
     // Prepare to detect infinite loop on subsequent events
-    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    if (infiniteLoopEventTypes.includes(params.type)) {
+      await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    }
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)

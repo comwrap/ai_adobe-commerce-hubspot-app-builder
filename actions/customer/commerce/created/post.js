@@ -17,6 +17,7 @@ const { Core } = require('@adobe/aio-sdk')
  *
  * @param {object} params - data received before transformation
  * @param {object} result - result data from the sender
+ * @returns {object} return status and code
  */
 async function postProcess (params, result) {
   const logger = Core.Logger('customer-commerce-created', { level: params.LOG_LEVEL || 'info' })
