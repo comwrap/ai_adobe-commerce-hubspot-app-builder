@@ -57,7 +57,8 @@ async function main (params) {
     const emailWithoutAt = params.data.value.email.replace(/@/g, '')
     const infiniteLoopKey = `customer_${emailWithoutAt}`
     const fingerPrintData = { email: params.data.value.email }
-    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+
+    if (state && await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
       logger.info(`Infinite loop break for customer ${params.data.email}`)
       return successResponse(params.type, 'event discarded to prevent infinite loop')
     }
@@ -129,7 +130,9 @@ async function main (params) {
     }
 
     // Prepare to detect infinite loop on subsequent events
-    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    if (state) {
+      await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    }
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)
