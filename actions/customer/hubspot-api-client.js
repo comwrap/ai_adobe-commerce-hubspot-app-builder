@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 const hubspot = require('@hubspot/api-client')
 
 /**
@@ -10,10 +11,29 @@ async function createContact (token, data) {
 
   const properties = data
   const SimplePublicObjectInputForCreate = { associations: [], properties }
+=======
+const hubspot = require('@hubspot/api-client');
+const {Core} = require("@adobe/aio-sdk");
+
+async function createContact(token, data, preProcess = {}) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`});
+    const logger = Core.Logger('hubspot-api-client', {level:  'info'})
+    const properties = data
+    let associations = []
+    if (preProcess.hasOwnProperty("hubspot_company_id")) {
+        associations.push({
+            to: { id: preProcess.hubspot_company_id },
+            types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }],
+        });
+    }
+
+    const SimplePublicObjectInputForCreate = { associations, properties };
+>>>>>>> Stashed changes
 
   return await hubspotClient.crm.contacts.basicApi.create(SimplePublicObjectInputForCreate)
 }
 
+<<<<<<< Updated upstream
 /**
  *
  * @param token
@@ -25,6 +45,20 @@ async function updateContact (token, data, contactId) {
   const properties = data
 
   const SimplePublicObjectInput = { properties }
+=======
+async function updateContact(token, data, contactId, preProcess = {}) {
+    const hubspotClient = new hubspot.Client({"accessToken": `${token}`})
+    const properties = data
+    let associations = []
+    if (preProcess.hasOwnProperty("hubspot_company_id")) {
+        associations.push({
+            to: { id: preProcess.hubspot_company_id },
+            types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }],
+        });
+    }
+
+    const SimplePublicObjectInput = { properties, associations }
+>>>>>>> Stashed changes
 
   return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }

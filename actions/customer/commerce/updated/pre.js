@@ -10,9 +10,15 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+<<<<<<< Updated upstream
 const { getCustomer } = require('../../commerce-customer-api-client')
 const { getContactAddressProperties } = require('../../hubspot-api-client')
 const { Core } = require('@adobe/aio-sdk')
+=======
+const {getCustomer} = require("../../commerce-customer-api-client");
+const {getContactAddressProperties, getCompanyIdByExternalId} = require("../../hubspot-api-client");
+const {Core} = require("@adobe/aio-sdk");
+>>>>>>> Stashed changes
 
 /**
  * This function hold any logic needed pre sending information to external backoffice application
@@ -60,9 +66,19 @@ async function preProcess (params, transformed) {
     country: contactProperties.properties.country
   }
 
+<<<<<<< Updated upstream
   if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
     return transformed
   }
+=======
+    if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
+        return transformed;
+    }
+    if (params.data.hasOwnProperty("company_attributes")) {
+        const companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
+        return { ...transformed, ...contactAddressMapped,  hubspot_company_id: companyId};
+    }
+>>>>>>> Stashed changes
 
   logger.debug('Updating customer address in HubSpot')
   return { ...transformed, ...contactAddressMapped }
