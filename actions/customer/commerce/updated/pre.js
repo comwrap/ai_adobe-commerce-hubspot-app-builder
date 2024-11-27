@@ -36,6 +36,7 @@ async function preProcess (params, transformed) {
     params.data.id
   )
 
+  //TODO if defaultBillingAddress is undefined remove address from hubspot
   const defaultBillingAddress = commerceCustomer.addresses.find(address => address.default_billing)
   if (!defaultBillingAddress) {
     return transformed

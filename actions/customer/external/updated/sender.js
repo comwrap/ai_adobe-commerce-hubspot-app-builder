@@ -26,7 +26,7 @@ async function sendData (params, transformed, preProcessed) {
   const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
 
   try {
-    logger.info('Start sending customer updated data to commerce', transformed)
+    logger.info('Start sending customer updated data to commerce', JSON.stringify(transformed))
     const response = await updateCustomer(
       params.COMMERCE_BASE_URL,
       params.COMMERCE_CONSUMER_KEY,
