@@ -50,6 +50,8 @@ async function preProcess (params, transformed) {
   }
 
   const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
+  logger.debug('id field ', params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD)
+  logger.debug('params data', params.data)
   logger.debug('ContactId to update in preProcess ', contactId)
 
   const contactProperties = await getContactAddressProperties(params.HUBSPOT_ACCESS_TOKEN, contactId)

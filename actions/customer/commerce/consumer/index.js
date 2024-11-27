@@ -40,7 +40,7 @@ async function main (params) {
     logger.info('Start processing request')
     logger.debug(`Consumer main params: ${stringParameters(params)}`)
 
-    const requiredParams = ['type']
+    const requiredParams = ['type','COMMERCE_HUBSPOT_CONTACT_ID_FIELD']
     const errorMessage = checkMissingRequestInputs(params, requiredParams, [])
 
     if (errorMessage) {
@@ -54,10 +54,12 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'com.adobe.commerce.observer.customer_save_commit_after'
     ]
+    let infiniteLoopKey = ''
+    let fingerPrintData = {}
     if (infiniteLoopEventTypes.includes(params.type)) {
       const emailWithoutAt = params.data.value.email.replace(/[@+]/g, '')
-      const infiniteLoopKey = `customer_${emailWithoutAt}`
-      const fingerPrintData = { email: params.data.value.email }
+      infiniteLoopKey = `customer_${emailWithoutAt}`
+      fingerPrintData = { email: params.data.value.email }
       if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
         logger.info(`Infinite loop break for customer ${params.data.email}`)
         return successResponse(params.type, 'event discarded to prevent infinite loop')
@@ -78,7 +80,7 @@ async function main (params) {
         }
 
         const contactIdField = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
-
+        logger.error(`Invalid request parameters: ${errorMessage}`)
         // eslint-disable-next-line
         const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === ''
 
@@ -87,8 +89,15 @@ async function main (params) {
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
             logger.info('Invoking created customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
-            response = res?.response?.result?.body
-            statusCode = res?.response?.result?.statusCode
+            logger.info('Code returned: '+res?.response?.result?.code)
+            if (res?.response?.result?.code===409) {
+              const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
+              response = res?.response?.result?.body
+              statusCode = res?.response?.result?.statusCode
+            } else {
+              response = res?.response?.result?.body
+              statusCode = res?.response?.result?.statusCode
+            }
           } else {
             logger.info('Invoking update customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
