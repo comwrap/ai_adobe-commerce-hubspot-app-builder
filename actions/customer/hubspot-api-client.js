@@ -39,6 +39,13 @@ async function updateContact (token, data, contactId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
   const logger = Core.Logger('hubspot-api-client', { level: 'info' })
   const properties = data
+  const associations = []
+  if (preProcess.hasOwnProperty('hubspot_company_id') && preProcess.hubspot_company_id !== null) {
+    associations.push({
+      to: { id: preProcess.hubspot_company_id, properties },
+      types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }]
+    })
+  }
   const SimplePublicObjectInput = { properties }
 
   return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)

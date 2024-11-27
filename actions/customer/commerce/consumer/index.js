@@ -89,14 +89,8 @@ async function main (params) {
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
             logger.info('Invoking created customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
-            if (res?.response?.result?.code === 409) {
-              const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
-              response = res?.response?.result?.body
-              statusCode = res?.response?.result?.statusCode
-            } else {
-              response = res?.response?.result?.body
-              statusCode = res?.response?.result?.statusCode
-            }
+            response = res?.response?.result?.body
+            statusCode = res?.response?.result?.statusCode
           } else {
             logger.info('Invoking update customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
