@@ -108,6 +108,7 @@ async function updateCustomer (baseUrl, consumerKey, consumerSecret, accessToken
     },
     logger
   )
+
   return await client.put(
       `customers/${data.customer.id}`,
       JSON.stringify(data),

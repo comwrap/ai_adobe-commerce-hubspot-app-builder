@@ -4,8 +4,12 @@
     "id": {"type": "number"},
     "firstname": { "type": "string" },
     "lastname": {"type": "string"},
-    "email": {"type":  "string"}
+    "email": {"type":  "string"},
+    "address": {"type":  "string"},
+    "city": {"type":  "string"},
+    "zip": {"type":  "string"},
+    "state": {"type":  "string"}
   },
-  "required": ["id", "firstname", "lastname", "email"],
+  "required": ["id", "firstname", "lastname", "email", "address", "city", "zip", "state"],
   "additionalProperties": true
 }

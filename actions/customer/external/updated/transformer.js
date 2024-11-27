@@ -10,6 +10,8 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 
+const {Core} = require("@adobe/aio-sdk");
+
 /**
  * This function transform the received customer data from external back-office application to Adobe commerce
  *
@@ -18,26 +20,38 @@ governing permissions and limitations under the License.
  * @returns {object} - Returns transformed data object
  */
 function transformData (params, customer) {
-  const defaultBilling = customer.addresses.find(address => address.default_billing)
+  const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
+
+  const defaultBilling = customer.addresses?.find(address => address.default_billing)
+  const addressId = defaultBilling?.id ? defaultBilling.id : 0
+  //TODO: If adding a new address firstname, lastname and telephone and country_id are required
+  //TODO add telephone as a field of the backoffice customer update event to be included in here
+  const telephoneNumber = "1234567890"
+
+  logger.debug('Address ID: ', addressId)
   return {
     customer: {
       id: customer.id,
-      firstname: params.data.name,
+      firstname: params.data.firstname,
       lastname: params.data.lastname,
       email: params.data.email,
-      address: [{
-        id: defaultBilling.id,
+      addresses: [{
+        id: addressId,
         street: [params.data.address],
         city: params.data.city,
-        // ToDo: figure out how to get region ID by the code
+        // ToDo: figure out how to get region ID by the code, county_id and region_id depend on each other
         // region_id: params.data.state ,
-        zip: params.data.zip,
-        country: params.data.country
+        country_id: params.data.country,
+        postcode: params.data.zip,
+        default_billing: true,
+        firstname: params.data.firstname,
+        lastname: params.data.lastname,
+        telephone: telephoneNumber
       }],
       custom_attributes: [
         {
           attribute_code: params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD,
-          value: params.data.id
+          value: `${params.data.id}`
         }
       ]
     }

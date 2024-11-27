@@ -10,6 +10,7 @@ OF ANY KIND, either express or implied. See the License for the specific languag
 governing permissions and limitations under the License.
 */
 const { getCustomerBySearchCriteria } = require('../../commerce-customer-api-client')
+const {Core} = require("@adobe/aio-sdk");
 
 /**
  * This function hold any logic needed pre sending information to Adobe commerce
@@ -18,7 +19,9 @@ const { getCustomerBySearchCriteria } = require('../../commerce-customer-api-cli
  * @param params
  */
 async function preProcess (params) {
-  const customer = await getCustomerBySearchCriteria(
+  const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
+
+  const customers = await getCustomerBySearchCriteria(
     params.COMMERCE_BASE_URL,
     params.COMMERCE_CONSUMER_KEY,
     params.COMMERCE_CONSUMER_SECRET,
@@ -27,9 +30,10 @@ async function preProcess (params) {
     'searchCriteria[filter_groups][0][filters][0][field]=email' +
       `&searchCriteria[filter_groups][0][filters][0][value]=${params.data.email}` +
       '&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
-  ).items[0]
+  )
 
-  return customer
+  logger.debug(`Customer: ${JSON.stringify(customers.items[0])}`)
+  return customers.items[0]
 }
 
 module.exports = {
