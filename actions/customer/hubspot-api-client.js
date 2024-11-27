@@ -13,12 +13,14 @@ async function createContact (token, data, preProcess = {}) {
   const logger = Core.Logger('hubspot-api-client', { level: 'info' })
   const properties = data
   const associations = []
-  if (preProcess.hasOwnProperty('hubspot_company_id')) {
+  logger.info('Pre process in create content'+ JSON.stringify(preProcess))
+  if (preProcess.hasOwnProperty('hubspot_company_id') && preProcess.hubspot_company_id !== null) {
     associations.push({
       to: { id: preProcess.hubspot_company_id },
       types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }]
     })
   }
+  logger.info('Associations'+ JSON.stringify(associations))
 
   const SimplePublicObjectInputForCreate = { associations, properties }
 
@@ -33,18 +35,11 @@ async function createContact (token, data, preProcess = {}) {
  * @param {object} preProcess preProcess
  * @returns {Promise} promise
  */
-async function updateContact (token, data, contactId, preProcess = {}) {
+async function updateContact (token, data, contactId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
+  const logger = Core.Logger('hubspot-api-client', { level: 'info' })
   const properties = data
-  const associations = []
-  if (preProcess.hasOwnProperty('hubspot_company_id')) {
-    associations.push({
-      to: { id: preProcess.hubspot_company_id },
-      types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }]
-    })
-  }
-
-  const SimplePublicObjectInput = { properties, associations }
+  const SimplePublicObjectInput = { properties }
 
   return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)
 }

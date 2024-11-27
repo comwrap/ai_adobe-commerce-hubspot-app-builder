@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const { updateContact } = require('../../hubspot-api-client')
+const { updateContact, getCompanyIdByExternalId} = require('../../hubspot-api-client')
 const { Core } = require('@adobe/aio-sdk')
 /**
  * This function send the customer updated dara to the external back-office application
@@ -22,8 +22,12 @@ async function sendData (params, preProcessed) {
   const logger = Core.Logger('customer-commerce-updated', { level: params.LOG_LEVEL || 'info' })
   try {
     const contactId = params.data[params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD]
+    let companyId = null
     logger.debug('Contact Id to update ', contactId)
-    const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId)
+    if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id!==0) {
+      companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
+    }
+    const response = await updateContact(params.HUBSPOT_ACCESS_TOKEN, preProcessed, contactId, companyId)
     logger.debug('Hubspot response: ', response)
     logger.debug('Contact id:', response.id)
 
