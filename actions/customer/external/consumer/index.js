@@ -15,8 +15,8 @@ const { stringParameters, checkMissingRequestInputs } = require('../../../utils'
 const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST, HTTP_OK } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
 const { errorResponse, successResponse } = require('../../../responses')
-const stateLib = require("@adobe/aio-lib-state");
-const {isAPotentialInfiniteLoop, storeFingerPrint} = require("../../../infiniteLoopCircuitBreaker");
+const stateLib = require('@adobe/aio-lib-state')
+const { isAPotentialInfiniteLoop, storeFingerPrint } = require('../../../infiniteLoopCircuitBreaker')
 
 /**
  * This is the consumer of the events coming from External back-office applications related to Customer entity.

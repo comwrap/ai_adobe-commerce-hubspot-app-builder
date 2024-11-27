@@ -18,7 +18,7 @@ governing permissions and limitations under the License.
  * @returns {object} - Returns transformed data object
  */
 function transformData (params, customer) {
-  const defaultBilling = customer.addresses.find(address => address.default_billing);
+  const defaultBilling = customer.addresses.find(address => address.default_billing)
   return {
     customer: {
       id: customer.id,
@@ -32,12 +32,12 @@ function transformData (params, customer) {
         // ToDo: figure out how to get region ID by the code
         // region_id: params.data.state ,
         zip: params.data.zip,
-        country: params.data.country,
+        country: params.data.country
       }],
       custom_attributes: [
         {
-            attribute_code: params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD,
-            value: params.data.id
+          attribute_code: params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD,
+          value: params.data.id
         }
       ]
     }

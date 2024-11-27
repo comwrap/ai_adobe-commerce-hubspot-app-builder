@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const {getCompanyIdByExternalId} = require("../../hubspot-api-client");
+const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
 
 /**
  * This function hold any logic needed pre sending information to external backoffice application
@@ -19,7 +19,7 @@ const {getCompanyIdByExternalId} = require("../../hubspot-api-client");
  */
 async function preProcess (params, transformed) {
   // @TODO Here implement any preprocessing needed
-  if (params.data.hasOwnProperty("company_attributes")) {
+  if (params.data.hasOwnProperty('company_attributes')) {
     const companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
     return {
       hubspot_company_id: companyId
