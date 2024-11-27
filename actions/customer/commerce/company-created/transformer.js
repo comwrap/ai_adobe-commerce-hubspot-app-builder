@@ -19,12 +19,11 @@ governing permissions and limitations under the License.
 function transformData (data) {
   return {
     name: `${data.company_name}`,
-    domain: `${data.id}`,
     city: `${data.city}`,
     phone: `${data.telephone}`,
     state: `${data.region_id}`,
     country: `${data.country_id}`,
-    external_company_id: `${data.id}`
+    external_company_id: `${data.entity_id}`
   }
 }
 
