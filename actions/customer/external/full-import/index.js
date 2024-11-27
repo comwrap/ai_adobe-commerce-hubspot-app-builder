@@ -48,6 +48,7 @@ async function main (params) {
       const contactsPage = await getContactsPage(params.HUBSPOT_ACCESS_TOKEN, batchSize, after)
 
       // clear Payload and counter
+      // eslint-disable-next-line
       counter = 0
       batchPayload = []
 

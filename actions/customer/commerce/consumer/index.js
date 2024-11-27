@@ -76,9 +76,11 @@ async function main (params) {
 
         const contactIdField = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
 
+        // eslint-disable-next-line
         const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === ''
 
         if (params.data.value.id) {
+          // eslint-disable-next-line
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
             logger.info('Invoking created customer')
             const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
@@ -98,6 +100,7 @@ async function main (params) {
       }
       case 'com.adobe.commerce.observer.company_save_commit_after':
         // check in hubspot if the company already exist
+        // eslint-disable-next-line
         const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id)
         logger.info('companyHubspotId:' + companyHubspotId)
         params.data.value.hubspotId = companyHubspotId

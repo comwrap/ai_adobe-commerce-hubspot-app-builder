@@ -2,8 +2,9 @@ const hubspot = require('@hubspot/api-client')
 
 /**
  *
- * @param {string} token
- * @param data
+ * @param {string} token token
+ * @param {object} data data
+ * @returns {Promise} promise
  */
 async function createContact (token, data) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -16,9 +17,10 @@ async function createContact (token, data) {
 
 /**
  *
- * @param token
- * @param data
- * @param contactId
+ * @param {string} token token
+ * @param {object} data data
+ * @param {string} contactId contact
+ * @returns {Promise} promise
  */
 async function updateContact (token, data, contactId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -31,8 +33,9 @@ async function updateContact (token, data, contactId) {
 
 /**
  *
- * @param token
- * @param data
+ * @param {string} token token
+ * @param {object} data data
+ * @returns {Promise} promise
  */
 async function createCompany (token, data) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -45,9 +48,10 @@ async function createCompany (token, data) {
 
 /**
  *
- * @param token
- * @param data
- * @param contactId
+ * @param {string} token token
+ * @param {object} data data
+ * @param {string} contactId contact
+ * @returns {Promise} promise
  */
 async function updateCompany (token, data, contactId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -60,9 +64,10 @@ async function updateCompany (token, data, contactId) {
 
 /**
  *
- * @param token
- * @param limit
- * @param after
+ * @param {string} token token
+ * @param {number} limit limit
+ * @param {string} after after
+ * @returns {Promise} promise
  */
 async function getContactsPage (token, limit, after) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -75,8 +80,9 @@ async function getContactsPage (token, limit, after) {
 
 /**
  *
- * @param token
- * @param contactId
+ * @param {string} token token
+ * @param {string} contactId contactid
+ * @returns {Promise} promise
  */
 async function getContactAddressProperties (token, contactId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })
@@ -94,8 +100,9 @@ async function getContactAddressProperties (token, contactId) {
 
 /**
  *
- * @param {string} token
- * @param externalId
+ * @param {string} token token
+ * @param {string} externalId external id
+ * @returns {Promise} promise
  */
 async function getCompanyIdByExternalId (token, externalId) {
   const hubspotClient = new hubspot.Client({ accessToken: `${token}` })

@@ -15,6 +15,7 @@ governing permissions and limitations under the License.
  *
  * @param {object} data - Data received before transformation
  * @param {object} transformed - Transformed received data
+ * @returns {void} no implementation curently
  */
 function preProcess (data, transformed) {
   // @TODO Here implement any preprocessing needed

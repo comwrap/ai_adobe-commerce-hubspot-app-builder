@@ -19,6 +19,7 @@ const { Core } = require('@adobe/aio-sdk')
  *
  * @param {object} params - Data received before transformation
  * @param {object} transformed - Transformed received data
+ * @returns {object} pre processed data
  */
 async function preProcess (params, transformed) {
   const logger = Core.Logger('customer-commerce-updated', { level: params.LOG_LEVEL || 'info' })
