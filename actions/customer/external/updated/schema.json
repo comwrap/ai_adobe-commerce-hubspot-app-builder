@@ -2,10 +2,14 @@
   "type": "object",
   "properties": {
     "id": {"type": "number"},
-    "name": { "type": "string" },
+    "firstname": { "type": "string" },
     "lastname": {"type": "string"},
-    "email": {"type":  "string"}
+    "email": {"type":  "string"},
+    "address": {"type":  "string"},
+    "city": {"type":  "string"},
+    "zip": {"type":  "string"},
+    "state": {"type":  "string"}
   },
-  "required": ["id", "name", "lastname", "email"],
+  "required": ["id", "firstname", "lastname", "email", "address", "city", "zip", "state"],
   "additionalProperties": true
 }

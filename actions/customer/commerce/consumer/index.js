@@ -12,11 +12,11 @@ governing permissions and limitations under the License.
 
 const { Core } = require('@adobe/aio-sdk')
 const { stringParameters, checkMissingRequestInputs } = require('../../../utils')
-const { errorResponse, successResponse, actionSuccessResponse} = require('../../../responses')
+const { errorResponse, successResponse, actionSuccessResponse } = require('../../../responses')
 const { HTTP_BAD_REQUEST, HTTP_OK, HTTP_INTERNAL_ERROR } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
 const stateLib = require('@adobe/aio-lib-state')
-const {isAPotentialInfiniteLoop, storeFingerPrint} = require('../../../infiniteLoopCircuitBreaker');
+const { isAPotentialInfiniteLoop, storeFingerPrint } = require('../../../infiniteLoopCircuitBreaker')
 const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
 
 /**
@@ -40,7 +40,7 @@ async function main (params) {
     logger.info('Start processing request')
     logger.debug(`Consumer main params: ${stringParameters(params)}`)
 
-    const requiredParams = ['type']
+    const requiredParams = ['type','COMMERCE_HUBSPOT_CONTACT_ID_FIELD']
     const errorMessage = checkMissingRequestInputs(params, requiredParams, [])
 
     if (errorMessage) {
@@ -54,13 +54,19 @@ async function main (params) {
     const infiniteLoopEventTypes = [
       'com.adobe.commerce.observer.customer_save_commit_after'
     ]
-    const emailWithoutAt = params.data.value.email.replace(/@/g, '')
-    const infiniteLoopKey = `customer_${emailWithoutAt}`
-    const fingerPrintData = { email: params.data.value.email }
-    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
-      logger.info(`Infinite loop break for customer ${params.data.email}`)
-      return successResponse(params.type, 'event discarded to prevent infinite loop')
+
+    let infiniteLoopKey = ''
+    let fingerPrintData = {}
+    if (state && infiniteLoopEventTypes.includes(params.type)) {
+      const emailWithoutAt = params.data.value.email.replace(/[@+]/g, '')
+      infiniteLoopKey = `customer_${emailWithoutAt}`
+      fingerPrintData = { email: params.data.value.email }
+      if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+        logger.info(`Infinite loop break for customer ${params.data.email}`)
+        return successResponse(params.type, 'event discarded to prevent infinite loop')
+      }
     }
+
 
     switch (params.type) {
       case 'com.adobe.commerce.observer.customer_save_commit_after': {
@@ -74,47 +80,57 @@ async function main (params) {
           return errorResponse(HTTP_BAD_REQUEST, `Invalid request parameters: ${errorMessage}`)
         }
 
-        const contactIdField  = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD;
-
-        const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === "";
+        const contactIdField = params.COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+        logger.error(`Invalid request parameters: ${errorMessage}`)
+        // eslint-disable-next-line
+        const notValidContactId = params.data.value.hasOwnProperty(contactIdField) && params.data.value[contactIdField] === ''
 
         if (params.data.value.id) {
+          // eslint-disable-next-line
           if (!params.data.value.hasOwnProperty(contactIdField) || notValidContactId) {
-            logger.info('Invoking created customer');
-            const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value);
-            response = res?.response?.result?.body;
-            statusCode = res?.response?.result?.statusCode;
+            logger.info('Invoking created customer')
+            const res = await openwhiskClient.invokeAction('customer-commerce/created', params.data.value)
+            logger.info('Code returned: '+res?.response?.result?.code)
+            if (res?.response?.result?.code===409) {
+              const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
+              response = res?.response?.result?.body
+              statusCode = res?.response?.result?.statusCode
+            } else {
+              response = res?.response?.result?.body
+              statusCode = res?.response?.result?.statusCode
+            }
           } else {
-            logger.info('Invoking update customer');
-            const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value);
-            response = res?.response?.result?.body;
-            statusCode = res?.response?.result?.statusCode;
+            logger.info('Invoking update customer')
+            const res = await openwhiskClient.invokeAction('customer-commerce/updated', params.data.value)
+            response = res?.response?.result?.body
+            statusCode = res?.response?.result?.statusCode
           }
         } else {
-          logger.info('Discarding customer saved event without customer Id');
-          return actionSuccessResponse('Discarding customer saved event without customer Id');
+          logger.info('Discarding customer saved event without customer Id')
+          return actionSuccessResponse('Discarding customer saved event without customer Id')
         }
         break
       }
-      case "com.adobe.commerce.observer.company_save_commit_after":
-        //check in hubspot if the company already exist
-        const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id);
-        logger.info('companyHubspotId:' + companyHubspotId);
-        params.data.value.hubspotId = companyHubspotId;
+      case 'com.adobe.commerce.observer.company_save_commit_after':
+        // check in hubspot if the company already exist
+        // eslint-disable-next-line
+        const companyHubspotId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.value.entity_id)
+        logger.info('companyHubspotId:' + companyHubspotId)
+        params.data.value.hubspotId = companyHubspotId
         if (companyHubspotId == null) {
           logger.info('Invoking created company')
           const res = await openwhiskClient.invokeAction(
-              'customer-commerce/company-created', params.data.value)
+            'customer-commerce/company-created', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         } else {
           logger.info('Invoking update company')
           const res = await openwhiskClient.invokeAction(
-              'customer-commerce/company-updated', params.data.value)
+            'customer-commerce/company-updated', params.data.value)
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         }
-        break;
+        break
       default:
         logger.error(`Event type not found: ${params.type}`)
         return errorResponse(HTTP_BAD_REQUEST, `This case type is not supported: ${params.type}`)
@@ -126,7 +142,9 @@ async function main (params) {
     }
 
     // Prepare to detect infinite loop on subsequent events
-    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    if (state && infiniteLoopEventTypes.includes(params.type)) {
+      await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
+    }
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)

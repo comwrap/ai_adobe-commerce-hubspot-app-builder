@@ -14,8 +14,8 @@ const { Core } = require('@adobe/aio-sdk')
 const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST, HTTP_OK, PUBLISH_EVENT_SUCCESS } = require('../../../constants')
 const { errorResponse, successResponse } = require('../../../responses')
 const { sendEvent } = require('../../../sendEvent')
-const { getContactsPage} = require("../../hubspot-api-client");
-const {checkMissingRequestInputs} = require("../../../utils");
+const { getContactsPage } = require('../../hubspot-api-client')
+const { checkMissingRequestInputs } = require('../../../utils')
 
 /**
  * This is the consumer of the events coming from External back-office applications related to product entity.
@@ -30,7 +30,6 @@ async function main (params) {
 
   logger.info('Start full batch import contacts')
   try {
-
     // check for missing request input parameters and headers
     const requiredParams = ['batchSize']
     const errorMessage = checkMissingRequestInputs(params, requiredParams, [])
@@ -40,43 +39,44 @@ async function main (params) {
     }
 
     const batchSize = params.batchSize
-    let after = undefined
+    let after
     let counter = 0
     let total = 0
     let batchPayload = []
 
-      do {
-        const contactsPage = await getContactsPage(params.HUBSPOT_ACCESS_TOKEN, batchSize, after);
+    do {
+      const contactsPage = await getContactsPage(params.HUBSPOT_ACCESS_TOKEN, batchSize, after)
 
-        // clear Payload and counter
-        counter = 0
-        batchPayload = []
+      // clear Payload and counter
+      // eslint-disable-next-line
+      counter = 0
+      batchPayload = []
 
-        contactsPage.results.forEach(contact => {
-          const customPayload = {
-            firstname: contact.properties.firstname,
-            lastname: contact.properties.lastname,
-            email: contact.properties.email,
-            contact_id: contact.id,
-            group_id: params.HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID,
-            _website: params.HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
-          }
-          batchPayload.push(customPayload)
-          counter++
-          total++
-        });
-
-        // Publish the batch event
-        const eventType = 'be-observer.contacts.batch'
-        const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
-        if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
-          logger.error(`Unable to publish event ${eventType}: Unknown event type`)
-          return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
+      contactsPage.results.forEach(contact => {
+        const customPayload = {
+          firstname: contact.properties.firstname,
+          lastname: contact.properties.lastname,
+          email: contact.properties.email,
+          contact_id: contact.id,
+          group_id: params.HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID,
+          _website: params.HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE
         }
+        batchPayload.push(customPayload)
+        counter++
+        total++
+      })
 
-        // Update the `after` cursor for the next page
-        after = contactsPage.paging?.next?.after || null;
-      } while (after); // Continue until there are no more pages
+      // Publish the batch event
+      const eventType = 'be-observer.contacts.batch'
+      const publishEventResult = await sendEvent(params, batchPayload, eventType, logger)
+      if (publishEventResult !== PUBLISH_EVENT_SUCCESS) {
+        logger.error(`Unable to publish event ${eventType}: Unknown event type`)
+        return errorResponse(HTTP_BAD_REQUEST, `Unable to publish event ${eventType}: Unknown event type`)
+      }
+
+      // Update the `after` cursor for the next page
+      after = contactsPage.paging?.next?.after || null
+    } while (after) // Continue until there are no more pages
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, `Successfully exported batch events to load ${total} Contacts`)

@@ -57,35 +57,34 @@ async function createCustomer (baseUrl, consumerKey, consumerSecret, accessToken
  * @param {object} data - Adobe commerce api payload
  */
 async function importCustomerBatch (baseUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, data) {
-    const client = getCommerceOauthClient(
-        {
-            url: baseUrl,
-            consumerKey,
-            consumerSecret,
-            accessToken,
-            accessTokenSecret
-        },
-        logger
-    )
+  const client = getCommerceOauthClient(
+    {
+      url: baseUrl,
+      consumerKey,
+      consumerSecret,
+      accessToken,
+      accessTokenSecret
+    },
+    logger
+  )
 
-    const jsonImport = {
-        source: {
-            allowed_error_count:0,
-            entity: 'customer',
-            behavior: 'add_update',
-            validation_strategy: 'validation-stop-on-errors',
-            items: data
-        }
-    };
+  const jsonImport = {
+    source: {
+      allowed_error_count: 0,
+      entity: 'customer',
+      behavior: 'add_update',
+      validation_strategy: 'validation-stop-on-errors',
+      items: data
+    }
+  }
 
-    return await client.post(
-        'import/json',
-        JSON.stringify(jsonImport),
-        '',
-        { 'Content-Type': 'application/json' }
-    )
+  return await client.post(
+    'import/json',
+    JSON.stringify(jsonImport),
+    '',
+    { 'Content-Type': 'application/json' }
+  )
 }
-
 
 /**
  * This function call Adobe commerce rest API to update a customer
@@ -109,6 +108,7 @@ async function updateCustomer (baseUrl, consumerKey, consumerSecret, accessToken
     },
     logger
   )
+
   return await client.put(
       `customers/${data.customer.id}`,
       JSON.stringify(data),
@@ -154,21 +154,21 @@ async function deleteCustomer (baseUrl, consumerKey, consumerSecret, accessToken
  * @param {object} customerId - Adobe commerce customer ID
  */
 async function getCustomer (baseUrl, consumerKey, consumerSecret, accessToken, accessTokenSecret, customerId) {
-    const client = getCommerceOauthClient(
-        {
-            url: baseUrl,
-            consumerKey,
-            consumerSecret,
-            accessToken,
-            accessTokenSecret
-        },
-        logger
-    )
+  const client = getCommerceOauthClient(
+    {
+      url: baseUrl,
+      consumerKey,
+      consumerSecret,
+      accessToken,
+      accessTokenSecret
+    },
+    logger
+  )
 
-    return await client.get(
+  return await client.get(
         `customers/${customerId}`,
         ''
-    )
+  )
 }
 
 /**
@@ -183,28 +183,28 @@ async function getCustomer (baseUrl, consumerKey, consumerSecret, accessToken, a
  * @param {string} searchCriteria - Adobe commerce search criteria
  */
 async function getCustomerBySearchCriteria (
-    baseUrl,
-    consumerKey,
-    consumerSecret,
-    accessToken,
-    accessTokenSecret,
-    searchCriteria) {
-    const client = getCommerceOauthClient(
-        {
-            url: baseUrl,
-            consumerKey,
-            consumerSecret,
-            accessToken,
-            accessTokenSecret
-        },
-        logger
-    )
+  baseUrl,
+  consumerKey,
+  consumerSecret,
+  accessToken,
+  accessTokenSecret,
+  searchCriteria) {
+  const client = getCommerceOauthClient(
+    {
+      url: baseUrl,
+      consumerKey,
+      consumerSecret,
+      accessToken,
+      accessTokenSecret
+    },
+    logger
+  )
 
-    logger.info(`searchCriteria: ${searchCriteria}`)
-    return await client.get(
+  logger.info(`searchCriteria: ${searchCriteria}`)
+  return await client.get(
         `customers/search?${searchCriteria}`,
         ''
-    )
+  )
 }
 
 module.exports = {
@@ -213,5 +213,5 @@ module.exports = {
   deleteCustomer,
   getCustomer,
   getCustomerBySearchCriteria,
-    importCustomerBatch
+  importCustomerBatch
 }

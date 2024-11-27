@@ -13,7 +13,7 @@ governing permissions and limitations under the License.
 const { Core } = require('@adobe/aio-sdk')
 const { stringParameters } = require('../../../utils')
 const { sendData } = require('./sender')
-const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST } = require('../../../constants')
+const { HTTP_INTERNAL_ERROR } = require('../../../constants')
 
 const { actionErrorResponse, actionSuccessResponse } = require('../../../responses')
 
@@ -35,9 +35,9 @@ async function main (params) {
       logger.error(`Send data failed: ${result.message}`)
       return actionErrorResponse(result.statusCode, result.message)
     }
-    return actionSuccessResponse( JSON.stringify(result))
     logger.debug('Process finished successfully')
-    return actionSuccessResponse('Customer created successfully')
+    return actionSuccessResponse(JSON.stringify(result))
+    // return actionSuccessResponse('Customer created successfully')
   } catch (error) {
     logger.error(`Error processing the request: ${error}`)
     return actionErrorResponse(HTTP_INTERNAL_ERROR, error.message)

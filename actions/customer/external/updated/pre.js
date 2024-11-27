@@ -9,15 +9,31 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
+const { getCustomerBySearchCriteria } = require('../../commerce-customer-api-client')
+const {Core} = require("@adobe/aio-sdk");
 
 /**
  * This function hold any logic needed pre sending information to Adobe commerce
  *
  * @param {object} data - Data received before transformation
- * @param {object} transformed - Transformed received data
+ * @param params
  */
-function preProcess (data, transformed) {
-  // @TODO Here implement any preprocessing needed
+async function preProcess (params) {
+  const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
+
+  const customers = await getCustomerBySearchCriteria(
+    params.COMMERCE_BASE_URL,
+    params.COMMERCE_CONSUMER_KEY,
+    params.COMMERCE_CONSUMER_SECRET,
+    params.COMMERCE_ACCESS_TOKEN,
+    params.COMMERCE_ACCESS_TOKEN_SECRET,
+    'searchCriteria[filter_groups][0][filters][0][field]=email' +
+      `&searchCriteria[filter_groups][0][filters][0][value]=${params.data.email}` +
+      '&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'
+  )
+
+  logger.debug(`Customer: ${JSON.stringify(customers.items[0])}`)
+  return customers.items[0]
 }
 
 module.exports = {

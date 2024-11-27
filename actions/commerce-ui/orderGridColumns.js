@@ -18,6 +18,7 @@ const logger = Core.Logger('order-custom-grid-columns', { level: 'error' });
  *
  * @returns {object} Response object containing status code and order grid columns.
  */
+/* eslint-disable */
 export async function main() {
   const orderGridColumns = {
     orderGridColumns: {}
@@ -46,3 +47,4 @@ export async function main() {
     };
   }
 }
+/* eslint-enable */

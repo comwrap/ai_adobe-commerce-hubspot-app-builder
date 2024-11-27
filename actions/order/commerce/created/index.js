@@ -32,7 +32,6 @@ async function main (params) {
   logger.info('Start processing request')
   logger.debug(`Received params: ${stringParameters(params)}`)
 
-
   try {
     logger.debug(`Validate data: ${JSON.stringify(params.data)}`)
     const validation = validateData(params.data)
