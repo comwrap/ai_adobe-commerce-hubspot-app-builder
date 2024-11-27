@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const { getCustomer } = require('../../commerce-customer-api-client')
-const { getContactAddressProperties } = require('../../hubspot-api-client')
+const { getContactAddressProperties, getCompanyIdByExternalId } = require('../../hubspot-api-client')
 const { Core } = require('@adobe/aio-sdk')
 
 /**
@@ -63,6 +63,10 @@ async function preProcess (params, transformed) {
 
   if (JSON.stringify(currentContactAddress) === JSON.stringify(contactAddressMapped)) {
     return transformed
+  }
+  if (params.data.hasOwnProperty('company_attributes')) {
+    const companyId = await getCompanyIdByExternalId(params.HUBSPOT_ACCESS_TOKEN, params.data.company_attributes.company_id)
+    return { ...transformed, ...contactAddressMapped, hubspot_company_id: companyId }
   }
 
   logger.debug('Updating customer address in HubSpot')

@@ -21,13 +21,20 @@ const { Core } = require('@adobe/aio-sdk')
  * @param {object} preProcessed - result of the pre-process logic if any
  * @returns {object} returns the sending result if needed for post process
  */
+
+/**
+ *
+ * @param params
+ * @param data
+ * @param preProcessed
+ */
 async function sendData (params, data, preProcessed) {
   const logger = Core.Logger('customer-commerce-created', { level: params.LOG_LEVEL || 'info' })
   try {
-    const response = await createContact(params.HUBSPOT_ACCESS_TOKEN, data)
+    logger.debug('PreProcess: ', preProcessed)
+    const response = await createContact(params.HUBSPOT_ACCESS_TOKEN, data, preProcessed)
     logger.debug('Hubspot response: ', response)
     logger.debug('Contact id:', response.id)
-
     return {
       success: true,
       contactId: response.id

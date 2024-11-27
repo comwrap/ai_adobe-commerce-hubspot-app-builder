@@ -15,6 +15,8 @@ const { stringParameters, checkMissingRequestInputs } = require('../../../utils'
 const { HTTP_INTERNAL_ERROR, HTTP_BAD_REQUEST, HTTP_OK } = require('../../../constants')
 const Openwhisk = require('../../../openwhisk')
 const { errorResponse, successResponse } = require('../../../responses')
+const stateLib = require('@adobe/aio-lib-state')
+const { isAPotentialInfiniteLoop, storeFingerPrint } = require('../../../infiniteLoopCircuitBreaker')
 
 /**
  * This is the consumer of the events coming from External back-office applications related to Customer entity.
@@ -24,6 +26,9 @@ const { errorResponse, successResponse } = require('../../../responses')
  */
 async function main (params) {
   const logger = Core.Logger('customer-external-consumer', { level: params.LOG_LEVEL || 'info' })
+
+  // Create a state instance
+  const state = await stateLib.init()
 
   try {
     const openwhiskClient = new Openwhisk(params.API_HOST, params.API_AUTH)
@@ -44,6 +49,19 @@ async function main (params) {
     }
 
     logger.info(`Params type: ${params.type}`)
+
+    // Detect infinite loop and break it
+    const infiniteLoopEventTypes = [
+      'be-observer.customer_update'
+    ]
+    const emailWithoutAt = params.data.email.replace(/@/g, '')
+    const infiniteLoopKey = `customer_${emailWithoutAt}`
+    const fingerPrintData = { email: params.data.email }
+    if (await isAPotentialInfiniteLoop(state, infiniteLoopKey, fingerPrintData, infiniteLoopEventTypes, params.type)) {
+      logger.info(`Infinite loop break for customer ${params.data.email}`)
+      return successResponse(params.type, 'event discarded to prevent infinite loop')
+    }
+
     switch (params.type) {
       case 'be-observer.contacts.batch': {
         logger.info('Invoking customer batch creation')
@@ -69,6 +87,9 @@ async function main (params) {
       logger.error(`Error response: ${response.error}`)
       return errorResponse(statusCode, response.error)
     }
+
+    // Prepare to detect infinite loop on subsequent events
+    await storeFingerPrint(state, infiniteLoopKey, fingerPrintData)
 
     logger.info(`Successful request: ${statusCode}`)
     return successResponse(params.type, response)
