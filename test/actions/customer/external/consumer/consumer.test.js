@@ -29,7 +29,7 @@ describe('Given customer external consumer', () => {
       const TYPE_NOT_FOUND_RESPONSE = {
         error: {
           body: {
-            error: 'This case type is not supported: foo'
+            error: 'This case type is not supported: |foo|'
           },
           statusCode: HTTP_BAD_REQUEST
         }

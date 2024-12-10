@@ -20,8 +20,8 @@ describe('Given customer external updated validator', () => {
   })
   describe('When data to validate is valid', () => {
     it.each([
-      [{ data: { id: 1234, name: 'John', lastname: 'Doe', email: 'john@doe.com' } }],
-      [{ data: { id: 1234, name: 'John', lastname: 'Doe', email: 'john@doe.com', extra: 'EXTRA' } }]
+      [{ data: { id: 1234, firstname: 'John', lastname: 'Doe', email: 'john@doe.com', address: 'Test string', city: 'Frankfurt', zip: '10000', state: 'Hessen' } }],
+      [{ data: { id: 12345, firstname: 'John 1', lastname: 'Doe 2', email: 'john2@doe.com', address: 'Test string', city: 'Frankfurt', zip: '10000', state: 'Hessen' } }]
     ])('Then for %o,  returns successful response', (params) => {
       const SUCCESSFUL_RESPONSE = { success: true }
       expect(validator.validateData(params)).toMatchObject(SUCCESSFUL_RESPONSE)

@@ -32,6 +32,7 @@ describe('Given customer commerce consumer', () => {
       const params = {
         API_HOST: 'API_HOST',
         API_AUTH: 'API_AUTH',
+        COMMERCE_HUBSPOT_CONTACT_ID_FIELD: 123,
         type: 'com.adobe.commerce.observer.customer_save_commit_after',
         data: {
           value: {
@@ -80,6 +81,7 @@ describe('Given customer commerce consumer', () => {
       async () => {
         const params = {
           type: 'com.adobe.commerce.observer.customer_save_commit_after',
+          COMMERCE_HUBSPOT_CONTACT_ID_FIELD: 123,
           data: {
             value: {
               id: 1,
@@ -126,6 +128,7 @@ describe('Given customer commerce consumer', () => {
     test('Then returns error response', async () => {
       const params = {
         type: 'NOT_SUPPORTED_TYPE',
+        COMMERCE_HUBSPOT_CONTACT_ID_FIELD: 123,
         data: {
           value: {
             id: 1,
