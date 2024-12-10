@@ -40,7 +40,6 @@ async function main (params) {
       return actionErrorResponse(HTTP_BAD_REQUEST, validation.message)
     }
 
-
     logger.debug(`Transform data: ${JSON.stringify(params.data)}`)
     const transformedData = transformData(params.data)
 

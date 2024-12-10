@@ -11,7 +11,7 @@ governing permissions and limitations under the License.
 */
 
 const { getCustomer } = require('../../commerce-customer-api-client')
-const { getContactAddressProperties, getCompanyIdByExternalId } = require('../../hubspot-api-client')
+const { getContactAddressProperties } = require('../../hubspot-api-client')
 const { Core } = require('@adobe/aio-sdk')
 
 /**

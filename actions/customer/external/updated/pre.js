@@ -15,8 +15,8 @@ const { Core } = require('@adobe/aio-sdk')
 /**
  * This function hold any logic needed pre sending information to Adobe commerce
  *
- * @param {object} data - Data received before transformation
- * @param params
+ * @param {object} params list
+ * @returns {object} pre processed data
  */
 async function preProcess (params) {
   const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })

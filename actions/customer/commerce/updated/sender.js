@@ -9,7 +9,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTA
 OF ANY KIND, either express or implied. See the License for the specific language
 governing permissions and limitations under the License.
 */
-const { updateContact, getCompanyIdByExternalId} = require('../../hubspot-api-client')
+const { updateContact, getCompanyIdByExternalId } = require('../../hubspot-api-client')
 const { Core } = require('@adobe/aio-sdk')
 /**
  * This function send the customer updated dara to the external back-office application
@@ -18,6 +18,7 @@ const { Core } = require('@adobe/aio-sdk')
  * @param {object} preProcessed - result of the pre-process logic if any
  * @returns {object} returns the sending result if needed for post process
  */
+/* eslint-disable */
 async function sendData (params, preProcessed) {
   const logger = Core.Logger('customer-commerce-updated', { level: params.LOG_LEVEL || 'info' })
   try {
@@ -52,3 +53,4 @@ async function sendData (params, preProcessed) {
 module.exports = {
   sendData
 }
+/* eslint-enable */

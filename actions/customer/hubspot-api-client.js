@@ -13,14 +13,16 @@ async function createContact (token, data, preProcess = {}) {
   const logger = Core.Logger('hubspot-api-client', { level: 'info' })
   const properties = data
   const associations = []
-  logger.info('Pre process in create content'+ JSON.stringify(preProcess))
+  logger.info('Pre process in create content' + JSON.stringify(preProcess))
+  /* eslint-disable */
   if (preProcess.hasOwnProperty('hubspot_company_id') && preProcess.hubspot_company_id !== null) {
     associations.push({
       to: { id: preProcess.hubspot_company_id },
       types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 279 }]
     })
   }
-  logger.info('Associations'+ JSON.stringify(associations))
+  /* eslint-enable */
+  logger.info('Associations' + JSON.stringify(associations))
 
   const SimplePublicObjectInputForCreate = { associations, properties }
 
@@ -43,11 +45,11 @@ async function updateContact (token, data, contactId, companyId = null) {
   const SimplePublicObjectInput = { properties }
 
   if (companyId !== null) {
-    const BatchInputPublicDefaultAssociationMultiPost = { inputs: [{"_from":{"id":contactId},"to":{"id":companyId}}] };
-    const fromObjectType = "contact";
-    const toObjectType = "company";
-    const apiResponse = await hubspotClient.crm.associations.v4.batchApi.createDefault(fromObjectType, toObjectType, BatchInputPublicDefaultAssociationMultiPost);
-    logger.info('api respones associate default:' , JSON.stringify(apiResponse))
+    const BatchInputPublicDefaultAssociationMultiPost = { inputs: [{ _from: { id: contactId }, to: { id: companyId } }] }
+    const fromObjectType = 'contact'
+    const toObjectType = 'company'
+    const apiResponse = await hubspotClient.crm.associations.v4.batchApi.createDefault(fromObjectType, toObjectType, BatchInputPublicDefaultAssociationMultiPost)
+    logger.info('api respones associate default:', JSON.stringify(apiResponse))
   }
 
   return await hubspotClient.crm.contacts.basicApi.update(contactId, SimplePublicObjectInput)

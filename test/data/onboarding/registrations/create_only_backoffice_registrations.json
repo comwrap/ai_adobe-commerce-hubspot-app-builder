@@ -1,6 +1,3 @@
 {
-  "product": ["backoffice"],
-  "customer": [],
-  "order": [],
-  "stock": []
+  "customer": ["backoffice"]
 }

@@ -24,9 +24,10 @@ const { Core } = require('@adobe/aio-sdk')
 
 /**
  *
- * @param params
- * @param data
- * @param preProcessed
+ * @param {object} params Params list
+ * @param {object} data Data to Send
+ * @param {object} preProcessed pre-processed data
+ * @returns {object} return status of the sending
  */
 async function sendData (params, data, preProcessed) {
   const logger = Core.Logger('customer-commerce-created', { level: params.LOG_LEVEL || 'info' })

@@ -1,15 +1,14 @@
 const fetch = require('node-fetch')
 const uuid = require('uuid')
 
+/* eslint-disable */
 exports.main = async (event, callback) => {
   /*****
     Use inputs to get data from any action in your workflow and use it in your code instead of having to use the HubSpot API.
   *****/
-  const orderId = event.object.objectId
+  const customerId = event.object.objectId
 
-  console.log(orderId)
-
-  const eventType = 'be-observer.sales_order_shipment_create'
+  const eventType = 'be-observer.customer_update'
   const authUrl = 'https://ims-na1.adobelogin.com/ims/token/v3'
   const clientId = process.env.clientId // Replace with your actual client ID
   const providerId = process.env.providerId // Replace with your actual client ID
@@ -22,8 +21,6 @@ exports.main = async (event, callback) => {
     client_secret: clientSecret,
     scope
   })
-
-  console.log(event)
 
   const response = await fetch(authUrl, {
     method: 'POST',
@@ -39,8 +36,6 @@ exports.main = async (event, callback) => {
   }
 
   const data = await response.json()
-  const hsShippingTrackingNumber = event.inputFields.hs_shipping_tracking_number
-  const hsExternalOrderId = event.inputFields.hs_external_order_id
 
   const url = 'https://eventsingress.adobe.io'
   const options = {
@@ -57,9 +52,15 @@ exports.main = async (event, callback) => {
       type: eventType,
       id: uuid.v4(),
       data: {
-        id: orderId,
-        trackingNumber: hsShippingTrackingNumber,
-        incrementId: hsExternalOrderId
+        id: customerId,
+        firstname: event.inputFields.firstname,
+        lastname: event.inputFields.lastname,
+        email: event.inputFields.email,
+        city: event.inputFields.city,
+        country: event.inputFields.country,
+        zip: event.inputFields.zip,
+        address: event.inputFields.address,
+        state: event.inputFields.state
       }
     })
   }
@@ -68,9 +69,10 @@ exports.main = async (event, callback) => {
     .then(res => res)
     .catch(err => console.error('error:' + err))
 
-  callback(null, {
+  callback({
     outputFields: {
-      orderId
+      customerId
     }
   })
 }
+/* eslint-enable */

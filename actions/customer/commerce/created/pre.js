@@ -18,6 +18,7 @@ const { getCompanyIdByExternalId } = require('../../hubspot-api-client')
  * @param {object} transformed - Transformed received data
  * @returns {void} no implementation curently
  */
+/* eslint-disable */
 async function preProcess (params, transformed) {
   // @TODO Here implement any preprocessing needed
   if (params.data.hasOwnProperty('company_attributes') && params.data.company_attributes.company_id !== 0) {
@@ -32,3 +33,4 @@ async function preProcess (params, transformed) {
 module.exports = {
   preProcess
 }
+/* eslint-enable */

@@ -16,7 +16,7 @@ const { Core } = require('@adobe/aio-sdk')
  * This function transform the received customer data from external back-office application to Adobe commerce
  *
  * @param {object} params - Data received from Adobe commerce
- * @param {object} customer
+ * @param {object} customer - Transformed received data
  * @returns {object} - Returns transformed data object
  */
 function transformData (params, customer) {
