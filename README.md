@@ -38,4 +38,5 @@ For more information pls go to
 
 [Adobe Commerce Admin UI SDK overview](https://developer.adobe.com/commerce/extensibility/admin-ui-sdk/)
 
+Api Mesh file for configuration you can find at mesh.json file.
 

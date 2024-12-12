@@ -225,3 +225,18 @@ Custom script you can find:
 ```
 scripts/lib/hubspot/workflow_customer.js
 ```
+
+## Run initial synchornization
+
+After you are done with installation steps, you can run initial synchronization. Module provides an API endpoint start the sync process: 
+
+```
+curl --request POST \
+  --url https://YOUR-APP-URL/api/v1/web/customer-backoffice/full-import \
+  --header 'Authorization: Bearer TOKEN' \
+  --header 'Content-Type: application/json' \
+  --header 'x-gw-ims-org-id: ORGID' \
+  --data '{
+	"batchSize": "100"
+}'
+```

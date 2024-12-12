@@ -5,7 +5,7 @@
           "name": "data",
           "handler": {
             "JsonSchema": {
-              "baseUrl": "https://270038-413siennadonkey-stage.adobeioruntime.net/api/v1/web/order-custom-grid-columns",
+              "baseUrl": "YOURURL/api/v1/web/order-custom-grid-columns",
               "operations": [
                 {
                   "type": "Query",
