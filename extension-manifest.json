@@ -1,8 +1,8 @@
 {
-    "name": "commerce-integration-starter-kit",
+    "name": "adobe-commerce-hubspot-app-builder",
     "displayName": "Adobe Commerce order grid custom columns",
-    "description": "Adobe Commerce order grid custom columns in admin panel",
+    "description": "Adobe Commerce order grid custom columns in admin panel for Hubspot Order Number",
     "platform": "web",
-    "id": "commerce-integration-starter-kit",
+    "id": "adobe-commerce-hubspot-app-builder",
     "version": "1.0.0"
   }
