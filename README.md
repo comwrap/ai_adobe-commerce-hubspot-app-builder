@@ -1,6 +1,10 @@
-# Commerce  Integration Starter Kit
+# Adobe App Builder integration for Adobe Commerce and Hubspot
 
-The integration between Adobe Commerce and HubSpot facilitates seamless data synchronization and management across customer, company, and order domains. Here's a brief description:
+The integration between Adobe Commerce and HubSpot facilitates seamless data synchronization and management across customer, company, and order domains. 
+
+This application serves as a reference implementation for integrating HubSpot and Adobe Commerce. It is designed to demonstrate basic integration features and provide a foundational starting point for further development. Users are encouraged to extend and customize the application to meet specific business requirements and leverage additional functionalities beyond the basic features provided.
+
+Here's a brief description:
 
 ## Adobe Commerce to HubSpot Integration
 

@@ -37,7 +37,6 @@ async function main (params) {
     }
     logger.debug('Process finished successfully')
     return actionSuccessResponse(JSON.stringify(result))
-    // return actionSuccessResponse('Customer created successfully')
   } catch (error) {
     logger.error(`Error processing the request: ${error}`)
     return actionErrorResponse(HTTP_INTERNAL_ERROR, error.message)

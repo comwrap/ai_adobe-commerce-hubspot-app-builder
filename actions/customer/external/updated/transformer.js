@@ -24,8 +24,8 @@ function transformData (params, customer) {
 
   const defaultBilling = customer.addresses?.find(address => address.default_billing)
   const addressId = defaultBilling?.id ? defaultBilling.id : 0
-  // TODO: If adding a new address firstname, lastname and telephone and country_id are required
-  // TODO add telephone as a field of the backoffice customer update event to be included in here
+
+  // If adding a new address firstname, lastname and telephone and country_id are required. Can be removed it aligned on Hubspot side
   const telephoneNumber = '1234567890'
 
   logger.debug('Address ID: ', addressId)
@@ -39,8 +39,6 @@ function transformData (params, customer) {
         id: addressId,
         street: [params.data.address],
         city: params.data.city,
-        // ToDo: figure out how to get region ID by the code, county_id and region_id depend on each other
-        // region_id: params.data.state ,
         country_id: params.data.country,
         postcode: params.data.zip,
         default_billing: true,

@@ -12,7 +12,7 @@ Go to the [Adobe developer console](https://developer.adobe.com/console) portal
   - I/0 events
   - Adobe I/O Events for Adobe Commerce
   - I/O management API
-- Download the [workspace configuration JSON](https://developer.adobe.com/commerce/extensibility/events/project-setup/#download-the-workspace-configuration-file) file and save it as `workspace.json` in the `./scripts/onboarding/config` starter kit folder because you will use it to configure Adobe IO Events in commerce afterward.
+- Download the [workspace configuration JSON](https://developer.adobe.com/commerce/extensibility/events/project-setup/#download-the-workspace-configuration-file) file and save it as `workspace.json` in the `./scripts/onboarding/config` folder because you will use it to configure Adobe IO Events in commerce afterward.
 
 ### Configure a new Integration in commerce
 Configure a new Integration to secure the calls to Commerce from App Builder using OAuth by following these steps:
@@ -24,7 +24,7 @@ Configure a new Integration to secure the calls to Commerce from App Builder usi
   ![Alt text](docs/integration-all-apis-access.png "New Integration")
 - Click Save.
 - In the list of integrations, activate your integration.
-- To configure the starter kit, you will need the integration details (consumer key, consumer secret, access token, and access token secret).
+- To configure the module, you will need the integration details (consumer key, consumer secret, access token, and access token secret).
 
 ### Install Commerce Eventing module (only required when running Adobe Commerce versions 2.4.4 or 2.4.5) 
 Install Adobe I/O Events for Adobe Commerce module in your commerce instance following this [documentation](https://developer.adobe.com/commerce/extensibility/events/installation/)
@@ -34,8 +34,8 @@ Install Adobe I/O Events for Adobe Commerce module in your commerce instance fol
 > By upgrading the Adobe I/O Events for Adobe Commerce module to version 1.6.0 or greater, you will benefit from some additional automated steps during onboarding.  
 
 
-## Starter Kit first deploy & onboarding
-Following the next steps, you will deploy and onboard the starter kit for the first time. The onboarding process sets up event providers and registrations based on your selection.
+## Commerce to Hubspot integration first deploy & onboarding
+Following the next steps, you will deploy and onboard the integration for the first time. The onboarding process sets up event providers and registrations based on your selection.
 
 ### Download the project
 - Download and unzip the project
@@ -48,7 +48,7 @@ Install the npm dependencies using the command:
 npm install
 ```
 
-This step will connect your starter kit project to the App builder project you created earlier.
+This step will connect your project to the App builder project you created earlier.
 Ensure to select the proper Organization > Project > Workspace with the following commands:
 ```bash
 aio login
@@ -72,7 +72,7 @@ You can confirm the success of the deployment in the Adobe Developer Console by 
 ![Alt text](docs/console-user-defined-actions.png "Workspace runtimes packages")
 
 #### Execute the onboarding
-This step will generate the IO Events providers and the registrations for your starter kit project.
+This step will generate the IO Events providers and the registrations for your project.
 If your Commerce instance Adobe I/O Events for Adobe Commerce module version 1.6.0 or greater, the module will also be automatically configured by the onboarding script.  
 To start the process run the command:
 ```bash
@@ -126,10 +126,9 @@ Here are the events with the minimal required fields you need to subscribe to, i
 
 | Entity         | Event                                                  | Required fields             | REST API Ref                                                                                                                                                                                                                                                                                                                                                                                                                                |
 |----------------|--------------------------------------------------------|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Customer       | observer.customer_save_commit_after                    | created_at, updated_at      | customer  [create](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/customers#operation/PostV1Customers) / [update](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/customerscustomerId#operation/PutV1CustomersCustomerId)                                                                                                                                                                                                                  |
-| Customer       | observer.customer_delete_commit_after                  | entity_id                   | customer [delete](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/customerscustomerId#operation/DeleteV1CustomersCustomerId)                                                                                                                                                                                                                                                                                                                |
-| Order          | observer.sales_order_save_commit_after                 | id, status, company_name, legal_name, company_email      | order update ([hold](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/ordersidhold#operation/PostV1OrdersIdHold), [unhold](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/ordersidunhold#operation/PostV1OrdersIdUnhold), [cancel](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/ordersidcancel#operation/PostV1OrdersIdCancel), [emails](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/ordersidemails#operation/PostV1OrdersIdEmails)) |
-| Company          | com.adobe.commerce.observer.company_save_commit_after                 | created_at, updated_at      | company update create  |
+| Customer       | observer.customer_save_commit_after                    | id, firstname, lastname, email, created_at, updated_at      | customer  [create](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/customers#operation/PostV1Customers) / [update](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/customerscustomerId#operation/PutV1CustomersCustomerId)                                                                                                                                                                                                                  |
+| Company       | observer.observer.company_save_commit_after             | id, status, company_name, legal_name, company_email         | company [create](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/company#operation/PostV1Company)                                                                                                                                                                                                                                                                                                                |
+| Order          | observer.sales_order_save_commit_after                 | id, increment_id, created_at, updated_at     | order create [get](https://adobe-commerce.redoc.ly/2.4.6-admin/tag/orders#operation/GetV1Orders) |
 
 
 
@@ -141,18 +140,25 @@ Hubspot is an integrated system and to connect Adobe Commerce with Hubspot you n
 
 Go to Data Management -> Integrations and create a new App.
 
-Inside of the created app you can switch to "Auth" tab and receive Access Token.
+Inside of the created app you can switch to "Auth" tab and receive an Access Token.
 
-Add to .env file of the project the following variable and add your valie here: 
+Add to .env file of the project the following variable and add your value here: 
 
 ```
 HUBSPOT_ACCESS_TOKEN=
 ```
 
+Additionally you have to add to .env file:
+
+```
+COMMERCE_HUBSPOT_CONTACT_ID_FIELD=
+```
+
+It's an Adobe Commerce customer custom attribute code, which will be used to save Hubspot Customer ID, so in case if customer already being exported to Hubspot, system will perform Update and not Create action
 
 ### Hubspot -> Adobe Commerce sync
 
-Part of hubspot integration is to allow to sync back to Adobe commerce if some information being changed on Hubspot side
+Part of the tion HubSpot integration involves enabling the synchronization of changes made in HubSpot back to Adobe Commerce.
 
 Currently supported:
 
@@ -181,21 +187,27 @@ So your custom code configuration will look at the end like following:
 
 ![alt text](docs/hubspot/hubspot-flow-custom-code.png)
 
+#### Create new attributes (for B2B only)
+
+In case you plan to use Companies synchronization, please create new attribute for Hubspot Contact: 
+
+`external_company_id` - Text field. It will be used by script to save Adobe Commerce Customer ID there.
+
 #### Manual Configuration (optional)
 
 If automated way is not an option for you, you can create them manually.
 
-On Hubport pls go to Automations -> Workflows -> Create a Workflow from scratch
+On Hubport go to Automations -> Workflows -> Create a Workflow from scratch
 
 ##### Shipment sync
 
-For shipment sync pls choose "Order" as main automation object.
+For shipment sync choose "Order" as main automation object.
 
 Create the following automation: 
 
 ![alt text](docs/hubspot/hubspot-shipment.png)
 
-Custom script you can find:
+You can find the custom script in:
 
 ```
 scripts/lib/hubspot/workflow_shipment.js
@@ -203,13 +215,13 @@ scripts/lib/hubspot/workflow_shipment.js
 
 ##### Customer sync
 
-For shipment sync pls choose "Customer" as main automation object.
+For shipment sync choose "Customer" as main automation object.
 
 Create the following automation: 
 
 ![alt text](docs/hubspot/hubspot-customer.png)
 
-Pls create group for each of attribute changed: 
+Create group for each of attribute changed: 
 
 * firstname
 * lastname
@@ -228,7 +240,7 @@ scripts/lib/hubspot/workflow_customer.js
 
 ## Run initial synchornization
 
-After you are done with installation steps, you can run initial synchronization. Module provides an API endpoint start the sync process: 
+After you are done with installation steps, you can run initial synchronization. Module provides an API endpoint to start the sync process: 
 
 ```
 curl --request POST \
