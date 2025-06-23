@@ -23,10 +23,7 @@ async function sendData (params) {
   try {
     const response = await importCustomerBatch(
       params.COMMERCE_BASE_URL,
-      params.COMMERCE_CONSUMER_KEY,
-      params.COMMERCE_CONSUMER_SECRET,
-      params.COMMERCE_ACCESS_TOKEN,
-      params.COMMERCE_ACCESS_TOKEN_SECRET,
+      params,
       params.data)
 
     if (response?.errors) {

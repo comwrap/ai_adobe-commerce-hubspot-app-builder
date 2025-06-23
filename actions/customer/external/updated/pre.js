@@ -23,10 +23,7 @@ async function preProcess (params) {
 
   const customers = await getCustomerBySearchCriteria(
     params.COMMERCE_BASE_URL,
-    params.COMMERCE_CONSUMER_KEY,
-    params.COMMERCE_CONSUMER_SECRET,
-    params.COMMERCE_ACCESS_TOKEN,
-    params.COMMERCE_ACCESS_TOKEN_SECRET,
+    params,
     'searchCriteria[filter_groups][0][filters][0][field]=email' +
       `&searchCriteria[filter_groups][0][filters][0][value]=${params.data.email}` +
       '&searchCriteria[filter_groups][0][filters][0][condition_type]=eq'

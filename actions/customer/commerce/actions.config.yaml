@@ -3,12 +3,12 @@ consumer:
   web: 'no'
   runtime: nodejs:20
   inputs:
-   LOG_LEVEL: debug
-   COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
-   HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
+    LOG_LEVEL: debug
+    COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+    HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
   annotations:
-   require-adobe-auth: true
-   final: true
+    require-adobe-auth: true
+    final: true
 created:
   function: created/index.js
   web: 'no'

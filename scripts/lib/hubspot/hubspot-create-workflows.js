@@ -38,7 +38,7 @@ async function main (environment) {
               'providerId',
               'clientSecret'
             ],
-            sourceCode: sourceCodeContentShipment,
+            sourceCode: "exports.main = async (event, callback) => { callback(null, { outputFields: {} }); };",
             runtime: 'NODE20X',
             inputFields: [
               {
@@ -95,7 +95,12 @@ async function main (environment) {
       })
 
     }
-    request(optionsShipment, function (error, response) {
+
+    // console.log(optionsShipment)
+
+    
+    request(optionsShipment, function (error, response, body) {
+      console.log(body)
       if (error) throw new Error(error)
     })
 
@@ -181,7 +186,8 @@ async function main (environment) {
       })
 
     }
-    request(optionsCustomer, function (error, response) {
+    request(optionsCustomer, function (error, response, body) {
+      console.log(body)
       if (error) throw new Error(error)
     })
 

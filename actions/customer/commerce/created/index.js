@@ -44,18 +44,17 @@ async function main (params) {
     const transformedData = transformData(params.data)
 
     logger.debug(`Preprocess data: ${stringParameters(params)}`)
-    const preProcessed = await preProcess(params, transformedData)
+    const preProcessed = preProcess(params, transformedData)
 
     logger.debug(`Start sending data: ${JSON.stringify(params)}`)
     const result = await sendData(params, transformedData, preProcessed)
-    logger.debug(`Result from HubSpot request: ${JSON.stringify(result)}`)
     if (!result.success) {
       logger.error(`Send data failed: ${result.message}`)
       return actionErrorResponse(result.statusCode, result.message)
     }
 
     logger.debug(`Postprocess data: ${stringParameters(params)}`)
-    await postProcess(params, result)
+    postProcess(params, transformedData, preProcessed, result)
 
     logger.debug('Process finished successfully')
     return actionSuccessResponse('Customer created successfully')
