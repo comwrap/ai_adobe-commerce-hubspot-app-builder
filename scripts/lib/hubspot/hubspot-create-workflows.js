@@ -111,7 +111,7 @@ async function main (environment) {
       },
       body: JSON.stringify({
         isEnabled: true,
-        objectTypeId: '0-123',
+        objectTypeId: '0-1',
         flowType: 'WORKFLOW',
         name: 'Customer Edit Notification to Magento',
         startActionId: '1',
@@ -126,22 +126,64 @@ async function main (environment) {
             ],
             sourceCode: sourceCodeContentCustomer,
             runtime: 'NODE20X',
-            inputFields: [
-              {
-                name: 'hs_shipping_tracking_number',
-                value: {
-                  type: 'OBJECT_PROPERTY',
-                  propertyName: 'hs_shipping_tracking_number'
+            "inputFields": [
+                {
+                    "name": "firstname",
+                    "value": {
+                        "propertyName": "firstname",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "lastname",
+                    "value": {
+                        "propertyName": "lastname",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "email",
+                    "value": {
+                        "propertyName": "email",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "city",
+                    "value": {
+                        "propertyName": "city",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "country",
+                    "value": {
+                        "propertyName": "country",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "zip",
+                    "value": {
+                        "propertyName": "zip",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "address",
+                    "value": {
+                        "propertyName": "address",
+                        "type": "OBJECT_PROPERTY"
+                    }
+                },
+                {
+                    "name": "state",
+                    "value": {
+                        "propertyName": "hs_state_code",
+                        "type": "OBJECT_PROPERTY"
+                    }
                 }
-              },
-              {
-                name: 'hs_external_order_id',
-                value: {
-                  type: 'OBJECT_PROPERTY',
-                  propertyName: 'hs_external_order_id'
-                }
-              }
-            ]
+            ],
           }
         ],
         enrollmentCriteria: {
@@ -154,7 +196,169 @@ async function main (environment) {
                   operation: {
                     operator: 'IS_EQUAL_TO',
                     includeObjectsWithNoValueSet: false,
-                    value: 'hs_shipping_tracking_number',
+                    value: 'firstname',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'address',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'lastname',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'city',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'email',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'zip',
+                    operationType: 'STRING'
+                  },
+                  filterType: 'PROPERTY'
+                },
+                {
+                  property: 'hs_value',
+                  operation: {
+                    operator: 'IS_KNOWN',
+                    includeObjectsWithNoValueSet: false,
+                    operationType: 'ALL_PROPERTY'
+                  },
+                  filterType: 'PROPERTY'
+                }
+              ],
+              eventTypeId: '4-655002',
+              operator: 'HAS_COMPLETED',
+              filterBranchType: 'UNIFIED_EVENTS',
+              filterBranchOperator: 'AND'
+            },
+            {
+              filters: [
+                {
+                  property: 'hs_name',
+                  operation: {
+                    operator: 'IS_EQUAL_TO',
+                    includeObjectsWithNoValueSet: false,
+                    value: 'hs_state_code',
                     operationType: 'STRING'
                   },
                   filterType: 'PROPERTY'
@@ -177,7 +381,7 @@ async function main (environment) {
           ]
         },
         crmObjectCreationStatus: 'COMPLETE',
-        type: 'PLATFORM_FLOW'
+        type: 'CONTACT_FLOW'
       })
 
     }

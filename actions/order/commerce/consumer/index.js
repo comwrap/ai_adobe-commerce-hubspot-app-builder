@@ -56,7 +56,11 @@ async function main (params) {
           response = res?.response?.result?.body
           statusCode = res?.response?.result?.statusCode
         } else {
-          return successResponse(params.type, 'Discard due to is not created event')
+          logger.info('Invoking update order')
+          const res = await openwhiskClient.invokeAction(
+            'order-commerce/updated', params.data.value)
+          response = res?.response?.result?.body
+          statusCode = res?.response?.result?.statusCode
         }
         break
       }

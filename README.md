@@ -44,3 +44,8 @@ For more information pls go to
 
 Api Mesh file for configuration you can find at mesh.json file.
 
+## Trouble shooting
+
+### The Backoffice Customer Sync event returns a 400 error. 
+
+If you encounter a 400 response code for the event be-observer.customer_update, please validate your customer's required fields. Since every setup can vary, ensure that your required fields match across the Adobe Commerce Customer & Customer Address, actions/customer/external/updated/schema.json Schema, and HubSpot Workflows script.

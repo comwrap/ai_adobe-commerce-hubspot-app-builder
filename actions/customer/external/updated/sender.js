@@ -29,10 +29,7 @@ async function sendData (params, transformed, preProcessed) {
     logger.info('Start sending customer updated data to commerce', JSON.stringify(transformed))
     const response = await updateCustomer(
       params.COMMERCE_BASE_URL,
-      params.COMMERCE_CONSUMER_KEY,
-      params.COMMERCE_CONSUMER_SECRET,
-      params.COMMERCE_ACCESS_TOKEN,
-      params.COMMERCE_ACCESS_TOKEN_SECRET,
+      params,
       transformed)
 
     logger.info('Customer updated on commerce response: ', response)
@@ -41,7 +38,6 @@ async function sendData (params, transformed, preProcessed) {
       message: response
     }
   } catch (error) {
-    logger.error('Error updating customer on commerce', JSON.stringify(error))
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,

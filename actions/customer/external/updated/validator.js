@@ -11,7 +11,6 @@ governing permissions and limitations under the License.
 */
 
 const Ajv = require('ajv')
-const { Core } = require('@adobe/aio-sdk')
 
 /**
  * This function validate the customer data received from external back-office application
@@ -20,12 +19,10 @@ const { Core } = require('@adobe/aio-sdk')
  * @param {object} params - Received data from adobe commerce
  */
 function validateData (params) {
-  const logger = Core.Logger('customer-external-updated', { level: params.LOG_LEVEL || 'info' })
   const data = params.data
   const ajv = new Ajv()
   const schema = require('./schema.json')
 
-  logger.debug('Validating data with schema. Data to validate: ', data)
   const validate = ajv.compile(schema)
   const isValid = validate(data)
   if (!isValid) {

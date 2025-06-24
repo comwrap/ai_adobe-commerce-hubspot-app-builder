@@ -42,10 +42,7 @@ async function getCustomerAssociations (params) {
   if (params.data.customer_id) {
     const commerceCustomer = await getCustomer(
       params.COMMERCE_BASE_URL,
-      params.COMMERCE_CONSUMER_KEY,
-      params.COMMERCE_CONSUMER_SECRET,
-      params.COMMERCE_ACCESS_TOKEN,
-      params.COMMERCE_ACCESS_TOKEN_SECRET,
+      params,
       params.data.customer_id
     )
 

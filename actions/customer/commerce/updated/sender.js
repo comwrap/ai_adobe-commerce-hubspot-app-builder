@@ -32,7 +32,7 @@ async function sendData (params, preProcessed) {
     logger.debug('Hubspot response: ', response)
     logger.debug('Contact id:', response.id)
 
-    return {
+  return {
       success: true,
       contactId: response.id
     }

@@ -59,8 +59,8 @@ aio console workspace select
 
 Sync your local application with the App Builder project using the following command:
 ```bash
-aio app use
-# Choose the option 'm' (merge) 
+aio app use --merge
+# Choose the option 'm' (merge) to merge configurations
 ```
 
 ### Deploy
@@ -138,7 +138,7 @@ Hubspot is an integrated system and to connect Adobe Commerce with Hubspot you n
 
 ### Configuration
 
-Go to Data Management -> Integrations and create a new App.
+Go to Data Management -> Data Integration and create a new App.
 
 Inside of the created app you can switch to "Auth" tab and receive an Access Token.
 
@@ -155,6 +155,16 @@ COMMERCE_HUBSPOT_CONTACT_ID_FIELD=
 ```
 
 It's an Adobe Commerce customer custom attribute code, which will be used to save Hubspot Customer ID, so in case if customer already being exported to Hubspot, system will perform Update and not Create action
+
+For Full Data Synchronization, please also define: 
+
+```
+// Adobe Commerce Group ID for customers. (1 - General Group)
+HUBSPOT_FULL_IMPORT_CONTACT_GROUP_ID=1
+// Adobe Commerce Website Code to import 
+HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE=
+```
+
 
 ### Hubspot -> Adobe Commerce sync
 

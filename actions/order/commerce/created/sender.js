@@ -23,7 +23,7 @@ const logger = Core.Logger('order-commerce-created', { level: 'error' })
  * @returns {object} Returns the sending result if needed for post-process.
  */
 async function sendData (params, data, preProcessed) {
-  data.associations = preProcessed
+  data.associations = Array.isArray(preProcessed) ? preProcessed : (Object.keys(preProcessed).length > 0 ? [preProcessed] : [])
 
   try {
     const response = await fetch('https://api.hubapi.com/crm/v3/objects/orders', {
@@ -34,6 +34,7 @@ async function sendData (params, data, preProcessed) {
       },
       body: JSON.stringify(data)
     })
+
     const responseData = await response.json()
 
     if (!response.ok) {

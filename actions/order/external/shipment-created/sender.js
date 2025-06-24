@@ -25,11 +25,8 @@ async function sendData (params, transformed, preProcessed) {
   try {
     const response = await createShipment(
       params.COMMERCE_BASE_URL,
-      params.COMMERCE_CONSUMER_KEY,
-      params.COMMERCE_CONSUMER_SECRET,
-      params.COMMERCE_ACCESS_TOKEN,
-      params.COMMERCE_ACCESS_TOKEN_SECRET,
-      params.data.incrementId,
+      params,
+      params.data.orderId,
       transformed)
 
     return {
@@ -40,7 +37,7 @@ async function sendData (params, transformed, preProcessed) {
     return {
       success: false,
       statusCode: error.response?.statusCode || HTTP_INTERNAL_ERROR,
-      message: error.response?.body || error.message
+      message: error.message
 
     }
   }
