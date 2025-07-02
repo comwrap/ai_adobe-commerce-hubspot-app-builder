@@ -14,17 +14,52 @@ Go to the [Adobe developer console](https://developer.adobe.com/console) portal
   - I/O management API
 - Download the [workspace configuration JSON](https://developer.adobe.com/commerce/extensibility/events/project-setup/#download-the-workspace-configuration-file) file and save it as `workspace.json` in the `./scripts/onboarding/config` folder because you will use it to configure Adobe IO Events in commerce afterward.
 
-### Configure a new Integration in commerce ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF)
+### Supported Auth types
+
+With the new announcement of **Adobe Commerce as a Cloud Service** (ACCS), requests to Commerce will now use different authentication strategies depending on the flavor you're using:
+
+- If you're using the traditional Adobe Commerce Platform (PaaS) offering, you'll need to authenticate via OAuth1, like you've been doing until now.
+
+- If you're using the new cloud service (SaaS) offering, you'll need to authenticate your requests using [Adobe Identity Management System](https://experienceleague.adobe.com/en/docs/experience-manager-learn/foundation/authentication/adobe-ims-authentication-technical-video-understand) (IMS).
+
+#### ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF) Commerce OAuth1 - Configure a new Integration in Commerce
 Configure a new Integration to secure the calls to Commerce from App Builder using OAuth by following these steps:
 - In the Commerce Admin, navigate to System > Extensions > Integrations.
 - Click the `Add New Integration` button. The following screen displays
-  ![Alt text](docs/new-integration.png "New Integration")
+  ![New Integration Screen](docs/new-integration.png "New Integration")
 - Give the integration a name. The rest of the fields can be left blank.
 - Select API on the left and grant access to all the resources.
-  ![Alt text](docs/integration-all-apis-access.png "New Integration")
+  ![API Access Grant Screen](docs/integration-all-apis-access.png "New Integration")
 - Click Save.
 - In the list of integrations, activate your integration.
-- To configure the module, you will need the integration details (consumer key, consumer secret, access token, and access token secret).
+- To configure the starter kit, you will need the integration details (consumer key, consumer secret, access token, and access token secret).
+
+Store the credentials in the `.env` file, these are the minimum required values:
+```dotenv
+COMMERCE_CONSUMER_KEY=
+COMMERCE_CONSUMER_SECRET=
+COMMERCE_ACCESS_TOKEN=
+COMMERCE_ACCESS_TOKEN_SECRET=
+```
+
+#### ![Compatibility](https://img.shields.io/badge/SaaS%20Only-06402B) IMS OAuth - Add the OAuth Server to Server credentials to the environment
+Configure a new IMS OAuth Server to Server following this [documentation](https://developer.adobe.com/developer-console/docs/guides/authentication/ServerToServerAuthentication/implementation/#setting-up-the-oauth-server-to-server-credential/)
+
+Store the credentials in the `.env` file:
+```dotenv
+# The following values can be copied from the Credential details page in AppBuilder under Organization > Project > Workspace > OAuth Server-to-Server
+# Client ID
+OAUTH_CLIENT_ID=
+# Client Secret (Retrieve Client Secret)
+OAUTH_CLIENT_SECRET=
+# Technical Account ID
+OAUTH_TECHNICAL_ACCOUNT_ID=
+# Technical Account Email
+OAUTH_TECHNICAL_ACCOUNT_EMAIL=
+# Organization ID
+OAUTH_ORG_ID=
+OAUTH_SCOPES=AdobeID, openid, read_organizations, additional_info.projectedProductContext, additional_info.roles, adobeio_api, read_client_secret, manage_client_secrets, event_receiver_api
+```
 
 ### Install Commerce Eventing module (only required when running Adobe Commerce versions 2.4.4 or 2.4.5) ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF)
 Install Adobe I/O Events for Adobe Commerce module in your commerce instance following this [documentation](https://developer.adobe.com/commerce/extensibility/events/installation/)
