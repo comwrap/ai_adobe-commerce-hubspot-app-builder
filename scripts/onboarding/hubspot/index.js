@@ -19,8 +19,15 @@ require('dotenv').config()
  * @returns {object} - returns a response with provider and registrations info
  */
 async function main () {
-  await require('../../lib/hubspot/hubspot-create-workflows').main(process.env)
-  console.log('Process of creating Hubspot flows for Shipment integrations completed')
+  const result = await require('../../lib/hubspot/hubspot-create-workflows').main(process.env)
+  if (result.code !== 200) {
+    console.log(result.error)
+    return {
+      code: result.code,
+      success: false
+    }
+  }
+  console.log('Process of creating Hubspot flows for Shipment and Customer integrations completed')
 
   return {
     code: 200,
