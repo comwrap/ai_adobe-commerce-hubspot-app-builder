@@ -1,4 +1,4 @@
-# Installation instructions for configing Adobe Commerce and Hubspot integration
+# Installation instructions for configuring Adobe Commerce and Hubspot integration
 
 ## Application
 
@@ -6,7 +6,7 @@
 Go to the [Adobe developer console](https://developer.adobe.com/console) portal
 - Click on `Create a new project from template`
 - Select `App Builder`
-- Chose a name and title
+- Choose a name and title
 - Select stage workspace or create a new one
 - Add the following API services (select default Oauth server to server)
   - I/0 events
@@ -14,7 +14,7 @@ Go to the [Adobe developer console](https://developer.adobe.com/console) portal
   - I/O management API
 - Download the [workspace configuration JSON](https://developer.adobe.com/commerce/extensibility/events/project-setup/#download-the-workspace-configuration-file) file and save it as `workspace.json` in the `./scripts/onboarding/config` folder because you will use it to configure Adobe IO Events in commerce afterward.
 
-### Configure a new Integration in commerce
+### Configure a new Integration in commerce ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF)
 Configure a new Integration to secure the calls to Commerce from App Builder using OAuth by following these steps:
 - In the Commerce Admin, navigate to System > Extensions > Integrations.
 - Click the `Add New Integration` button. The following screen displays
@@ -26,7 +26,7 @@ Configure a new Integration to secure the calls to Commerce from App Builder usi
 - In the list of integrations, activate your integration.
 - To configure the module, you will need the integration details (consumer key, consumer secret, access token, and access token secret).
 
-### Install Commerce Eventing module (only required when running Adobe Commerce versions 2.4.4 or 2.4.5) 
+### Install Commerce Eventing module (only required when running Adobe Commerce versions 2.4.4 or 2.4.5) ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF)
 Install Adobe I/O Events for Adobe Commerce module in your commerce instance following this [documentation](https://developer.adobe.com/commerce/extensibility/events/installation/)
 
 > **Note**
@@ -85,7 +85,7 @@ The console will return the provider's IDs and save this information:
 
 Check your App developer console to confirm the creation of the registrations.
 
-### Complete the Adobe Commerce eventing configuration
+### Complete the Adobe Commerce eventing configuration ![Compatibility](https://img.shields.io/badge/PaaS%20Only-0000FF)
 
 > **Note**
 >
@@ -168,7 +168,7 @@ HUBSPOT_FULL_IMPORT_CONTACT_WEBSITE=
 
 ### Hubspot -> Adobe Commerce sync
 
-Part of the tion HubSpot integration involves enabling the synchronization of changes made in HubSpot back to Adobe Commerce.
+Part of the HubSpot integration involves enabling the synchronization of changes made in HubSpot back to Adobe Commerce.
 
 Currently supported:
 
@@ -177,7 +177,7 @@ Currently supported:
 
 To achieve it you need to have access to "Automation" configuration on Hubspot side.
 
-This integration coming with pre-build Hubspot onboarding script.
+This integration coming with pre-built Hubspot onboarding script.
 
 Please run: 
 
@@ -191,7 +191,7 @@ After creating 2 workflows, you need to go into each of them and add 3 secrets, 
 
 * clientId - App Builder Client ID
 * clientSecret - App Builder Client Secret
-* providerId - App Builder provider ID for incomin events
+* providerId - App Builder provider ID for incoming events
 
 So your custom code configuration will look at the end like following: 
 
@@ -248,7 +248,7 @@ Custom script you can find:
 scripts/lib/hubspot/workflow_customer.js
 ```
 
-## Run initial synchornization
+## Run initial synchronization
 
 After you are done with installation steps, you can run initial synchronization. Module provides an API endpoint to start the sync process: 
 

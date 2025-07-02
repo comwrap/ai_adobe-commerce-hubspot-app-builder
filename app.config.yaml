@@ -15,7 +15,7 @@ extensions:
             info:
               function: actions/starter-kit-info/index.js
               web: 'yes'
-              runtime: nodejs:20
+              runtime: nodejs:22
               inputs:
                 LOG_LEVEL: debug
               annotations:
@@ -43,7 +43,7 @@ extensions:
             registration:
               function: actions/registration/index.js
               web: 'yes'
-              runtime: 'nodejs:18'
+              runtime: 'nodejs:22'
               inputs:
                 LOG_LEVEL: debug
               annotations:
@@ -55,7 +55,7 @@ extensions:
             get-order-grid-columns:
               function: actions/commerce-ui/orderGridColumns.js
               web: 'yes'
-              runtime: 'nodejs:16'
+              runtime: 'nodejs:22'
               inputs:
                 LOG_LEVEL: debug
               annotations:

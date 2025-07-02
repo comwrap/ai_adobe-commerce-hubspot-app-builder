@@ -12,6 +12,15 @@ const hubspotUrl = 'https://api.hubapi.com/automation/v4/flows'
  */
 async function main (environment) {
   try {
+
+    if (!environment.HUBSPOT_ACCESS_TOKEN || environment.HUBSPOT_ACCESS_TOKEN.trim() === '') {
+        return {
+          code: 500,
+          success: false,
+          error: "HUBSPOT_ACCESS_TOKEN is missing or empty."
+        }
+    }
+
     // Create Workflow for shipment webhook
     const sourceFilePathShipment = path.join(__dirname, 'workflow_shipment.js')
     const sourceCodeContentShipment = fs.readFileSync(sourceFilePathShipment, 'utf8')

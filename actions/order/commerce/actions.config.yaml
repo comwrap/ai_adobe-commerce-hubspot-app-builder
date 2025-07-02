@@ -1,7 +1,7 @@
 consumer:
   function: consumer/index.js
   web: 'no'
-  runtime: nodejs:20
+  runtime: nodejs:22
   inputs:
     LOG_LEVEL: debug
   annotations:
@@ -10,7 +10,7 @@ consumer:
 created:
   function: created/index.js
   web: 'no'
-  runtime: nodejs:20
+  runtime: nodejs:22
   inputs:
     LOG_LEVEL: debug
     HUBSPOT_ACCESS_TOKEN: $HUBSPOT_ACCESS_TOKEN
@@ -20,6 +20,12 @@ created:
     COMMERCE_ACCESS_TOKEN: $COMMERCE_ACCESS_TOKEN
     COMMERCE_ACCESS_TOKEN_SECRET: $COMMERCE_ACCESS_TOKEN_SECRET
     COMMERCE_HUBSPOT_CONTACT_ID_FIELD: $COMMERCE_HUBSPOT_CONTACT_ID_FIELD
+    OAUTH_CLIENT_ID: $OAUTH_CLIENT_ID
+    OAUTH_CLIENT_SECRET: $OAUTH_CLIENT_SECRET 
+    OAUTH_TECHNICAL_ACCOUNT_ID: $OAUTH_TECHNICAL_ACCOUNT_ID
+    OAUTH_TECHNICAL_ACCOUNT_EMAIL: $OAUTH_TECHNICAL_ACCOUNT_EMAIL
+    OAUTH_ORG_ID: $OAUTH_ORG_ID
+    OAUTH_SCOPES: $OAUTH_SCOPES
   annotations:
     require-adobe-auth: true
     final: true

@@ -29,7 +29,7 @@ async function main (providerId, instanceId, workspaceConfiguration, environment
         config: {
           enabled: true,
           merchant_id: environment.COMMERCE_ADOBE_IO_EVENTS_MERCHANT_ID,
-          environment_id: 'Stage',
+          environment_id: environment.COMMERCE_ADOBE_IO_EVENTS_ENVIRONMENT_ID,
           provider_id: providerId,
           instance_id: instanceId,
           workspace_configuration: JSON.stringify(workspaceConfiguration)
