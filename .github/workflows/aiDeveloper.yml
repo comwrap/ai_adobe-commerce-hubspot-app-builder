@@ -72,14 +72,12 @@ jobs:
           git config --global user.email "actions-bot@github.com"
           npm install -g @openai/codex
 
-      - name: 4. Install Project Dependencies
-        run: npm install
 
-      - name: 5. Set Workspace Permissions for Non-Root User
+      - name: 4. Set Workspace Permissions for Non-Root User
         run: |
           chown -R node:node "$GITHUB_WORKSPACE"
 
-      - name: 7. Execute Main AI, Build, and Git Logic
+      - name: 5. Execute Main AI, Build, and Git Logic
         id: main_script
         shell: bash
         env:
